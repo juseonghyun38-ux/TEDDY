@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REFLIT — 영어 단어 게임</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f0;
+      --bg-tertiary: #eeede8;
+      --text-primary: #1a1a18;
+      --text-secondary: #6b6b67;
+      --text-tertiary: #9a9a96;
+      --border: rgba(0,0,0,0.12);
+      --border-md: rgba(0,0,0,0.22);
+      --purple-dark: #3C3489;
+      --purple-mid: #534AB7;
+      --purple-light: #7F77DD;
+      --purple-bg: #EEEDFE;
+      --green-text: #085041;
+      --green-bg: #E1F5EE;
+      --green-mid: #1D9E75;
+      --red-text: #501313;
+      --red-bg: #FCEBEB;
+      --red-mid: #E24B4A;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1e1e1c;
+        --bg-secondary: #2a2a27;
+        --bg-tertiary: #242422;
+        --text-primary: #f0efe8;
+        --text-secondary: #a0a09a;
+        --text-tertiary: #6b6b67;
+        --border: rgba(255,255,255,0.1);
+        --border-md: rgba(255,255,255,0.2);
+        --purple-bg: #26215C;
+        --purple-dark: #AFA9EC;
+        --green-bg: #04342C;
+        --green-text: #9FE1CB;
+        --red-bg: #4A1B0C;
+        --red-text: #F5C4B3;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-tertiary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      position: relative;
+      min-height: 600px;
+    }
+
+    .screen { display: none; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* ===== LOGIN ===== */
+    .login-screen {
+      align-items: center; justify-content: center;
+      padding: 3rem 2rem; min-height: 600px;
+    }
+    .logo-area { text-align: center; margin-bottom: 2.5rem; }
+    .logo-badge {
+      display: inline-block; background: var(--purple-mid); color: #fff;
+      font-size: 28px; font-weight: 600; padding: 12px 28px;
+      border-radius: var(--radius-lg); letter-spacing: 3px; margin-bottom: 0.75rem;
+    }
+    .logo-sub { font-size: 14px; color: var(--text-secondary); }
+    .login-card {
+      background: var(--bg-primary); border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 340px;
+    }
+    .login-title { font-size: 16px; font-weight: 500; text-align: center; margin-bottom: 1.5rem; color: var(--text-primary); }
+    .oauth-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 11px 0; margin-bottom: 10px;
+      border: 0.5px solid var(--border-md); border-radius: var(--radius-md);
+      background: var(--bg-primary); cursor: pointer; font-size: 14px;
+      color: var(--text-primary); transition: background 0.15s;
+    }
+    .oauth-btn:hover { background: var(--bg-secondary); }
+    .oauth-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .divider { display: flex; align-items: center; gap: 10px; margin: 1rem 0; }
+    .divider-line { flex: 1; height: 0.5px; background: var(--border); }
+    .divider-text { font-size: 12px; color: var(--text-tertiary); }
+    .guest-btn {
+      width: 100%; padding: 11px 0; border: none; background: var(--purple-mid); color: #fff;
+      border-radius: var(--radius-md); cursor: pointer; font-size: 14px; font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .guest-btn:hover { opacity: 0.88; }
+
+    /* ===== ONBOARDING ===== */
+    .onboarding-screen { padding: 2.5rem 2rem; min-height: 600px; }
+    .ob-title { font-size: 20px; font-weight: 500; color: var(--text-primary); margin-bottom: 0.4rem; }
+    .ob-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 2rem; }
+    .level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 2rem; }
+    .level-card {
+      background: var(--bg-primary); border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1.25rem 1rem; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .level-card:hover { border-color: var(--purple-light); }
+    .level-card.selected { border-color: var(--purple-mid); background: var(--purple-bg); }
+    .level-card.selected .level-name { color: var(--purple-dark); }
+    .level-card.full-width { grid-column: 1 / -1; }
+    .level-emoji { font-size: 24px; margin-bottom: 8px; display: block; }
+    .level-name { font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+    .level-desc { font-size: 12px; color: var(--text-secondary); }
+    .start-btn {
+      width: 100%; padding: 14px 0; background: var(--purple-mid); color: #fff;
+      border: none; border-radius: var(--radius-md); font-size: 15px; font-weight: 500;
+      cursor: pointer; opacity: 0.4; pointer-events: none; transition: opacity 0.15s;
+    }
+    .start-btn.enabled { opacity: 1; pointer-events: all; }
+    .start-btn.enabled:hover { opacity: 0.88; }
+
+    /* ===== GAME ===== */
+    .game-screen { min-height: 600px; }
+    .game-header {
+      background: var(--bg-primary); border-bottom: 0.5px solid var(--border);
+      padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .lives { display: flex; gap: 4px; }
+    .heart { font-size: 16px; }
+    .heart.lost { opacity: 0.22; }
+    .stage-info { text-align: center; }
+    .stage-label { font-size: 11px; color: var(--text-secondary); }
+    .stage-num { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+    .level-badge {
+      display: inline-block; background: var(--purple-bg); color: var(--purple-dark);
+      font-size: 11px; padding: 2px 8px; border-radius: 999px; margin-top: 2px;
+    }
+    .best-area { text-align: right; }
+    .best-label { font-size: 11px; color: var(--text-secondary); }
+    .best-num { font-size: 15px; font-weight: 600; color: var(--purple-mid); }
+
+    .game-body { flex: 1; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; }
+    .progress-bar-wrap {
+      width: 100%; max-width: 440px; height: 5px;
+      background: var(--border); border-radius: 99px; margin-bottom: 2rem;
+    }
+    .progress-bar-fill { height: 100%; background: var(--purple-mid); border-radius: 99px; transition: width 0.4s; }
+
+    .word-card {
+      background: var(--bg-primary); border: 0.5px solid var(--border);
+      border-radius: 20px; padding: 2.5rem 2rem; text-align: center;
+      width: 100%; max-width: 440px; margin-bottom: 2rem;
+    }
+    .word-en { font-size: 32px; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+    .word-phonetic { font-size: 14px; color: var(--text-tertiary); }
+
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 440px; }
+    .option-btn {
+      background: var(--bg-primary); border: 1px solid var(--border-md);
+      border-radius: var(--radius-lg); padding: 14px 12px; cursor: pointer;
+      font-size: 14px; color: var(--text-primary); text-align: left;
+      transition: all 0.12s; display: flex; align-items: flex-start; gap: 8px;
+    }
+    .option-btn:hover:not(.disabled) { border-color: var(--purple-light); background: var(--purple-bg); }
+    .option-btn.correct { border-color: var(--green-mid); background: var(--green-bg); color: var(--green-text); }
+    .option-btn.wrong { border-color: var(--red-mid); background: var(--red-bg); color: var(--red-text); }
+    .option-btn.disabled { pointer-events: none; }
+    .opt-num {
+      min-width: 20px; height: 20px; border-radius: 50%; background: var(--bg-secondary);
+      display: flex; align-items: center; justify-content: center; font-size: 11px;
+      color: var(--text-secondary); font-weight: 500; flex-shrink: 0; margin-top: 1px;
+    }
+    .option-btn.correct .opt-num { background: var(--green-mid); color: #fff; }
+    .option-btn.wrong .opt-num { background: var(--red-mid); color: #fff; }
+
+    .feedback-bar {
+      width: 100%; max-width: 440px; padding: 12px 16px;
+      border-radius: var(--radius-md); margin-top: 1.25rem; font-size: 14px; display: none;
+    }
+    .feedback-bar.correct-fb { background: var(--green-bg); color: var(--green-text); }
+    .feedback-bar.wrong-fb { background: var(--red-bg); color: var(--red-text); }
+    .fb-title { font-weight: 500; margin-bottom: 2px; }
+    .fb-hint { font-size: 12px; opacity: 0.8; }
+
+    /* ===== UPGRADE OVERLAY ===== */
+    .upgrade-overlay {
+      position: absolute; inset: 0; background: rgba(83,74,183,0.94);
+      border-radius: var(--radius-xl); display: none; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 10; padding: 2rem;
+    }
+    .upgrade-overlay.show { display: flex; }
+    .upgrade-icon { font-size: 56px; margin-bottom: 1rem; }
+    .upgrade-title { font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+    .upgrade-sub { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 2rem; text-align: center; line-height: 1.6; }
+    .upgrade-btn {
+      padding: 12px 36px; background: #fff; color: var(--purple-mid);
+      border: none; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .upgrade-btn:hover { opacity: 0.88; }
+
+    /* ===== GAME OVER ===== */
+    .gameover-screen {
+      align-items: center; justify-content: center; padding: 3rem 2rem; min-height: 600px;
+    }
+    .go-icon { font-size: 48px; margin-bottom: 1rem; }
+    .go-title { font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; }
+    .go-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 2rem; text-align: center; line-height: 1.6; }
+    .go-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 320px; margin-bottom: 2rem; }
+    .go-stat {
+      background: var(--bg-primary); border: 0.5px solid var(--border);
+      border-radius: var(--radius-md); padding: 1rem; text-align: center;
+    }
+    .go-stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+    .go-stat-value { font-size: 22px; font-weight: 600; color: var(--text-primary); }
+    .go-stat-value.accent { color: var(--purple-mid); }
+    .go-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+    .retry-btn {
+      padding: 13px 0; background: var(--purple-mid); color: #fff; border: none;
+      border-radius: var(--radius-md); font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.15s;
+    }
+    .retry-btn:hover { opacity: 0.88; }
+    .review-btn {
+      padding: 13px 0; background: var(--bg-primary); border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-md); font-size: 15px; cursor: pointer; color: var(--text-primary); transition: background 0.15s;
+    }
+    .review-btn:hover { background: var(--bg-secondary); }
+
+    @media (max-width: 500px) {
+      body { padding: 0; }
+      .app { border-radius: 0; min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- LOGIN -->
+  <div class="screen login-screen active" id="screen-login">
+    <div class="logo-area">
+      <div class="logo-badge">REFLIT</div>
+      <p class="logo-sub">영어 단어를 게임처럼 외우세요</p>
+    </div>
+    <div class="login-card">
+      <p class="login-title">시작하기</p>
+      <button class="oauth-btn" onclick="goOnboarding()">
+        <svg class="oauth-icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.418 13.415 17.64 11.107 17.64 9.2z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Google로 계속하기
+      </button>
+      <button class="oauth-btn" onclick="goOnboarding()">
+        <svg class="oauth-icon" viewBox="0 0 18 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.96 0c.064 1.08-.297 2.136-.965 2.912-.67.78-1.67 1.39-2.71 1.31C9.17 3.17 9.51 2.1 10.2 1.3 10.88.5 12 .02 12.96 0zM16.4 12.07c-.48 1.07-1.06 2.06-1.9 2.85-.69.65-1.42 1.3-2.45 1.32-1 .02-1.32-.6-2.46-.59-1.14.01-1.49.61-2.49.61-1.02.02-1.8-.71-2.52-1.38-1.9-1.78-3.38-5.08-2.83-8.24.35-1.98 1.39-3.79 2.96-4.9.78-.56 1.74-.9 2.73-.87 1.02.03 1.97.65 2.61.65.64 0 1.83-.8 3.07-.68.52.02 1.99.21 2.93 1.6-.08.05-1.74 1.02-1.72 3.04.02 2.42 2.12 3.22 2.07 3.59z"/>
+        </svg>
+        Apple로 계속하기
+      </button>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">또는</span>
+        <div class="divider-line"></div>
+      </div>
+      <button class="guest-btn" onclick="goOnboarding()">게스트로 시작</button>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div class="screen onboarding-screen" id="screen-onboarding">
+    <p class="ob-title">나의 영어 레벨은?</p>
+    <p class="ob-sub">레벨에 맞는 단어를 골라드릴게요</p>
+    <div class="level-grid">
+      <div class="level-card" data-level="kindergarten" onclick="selectLevel(this)">
+        <span class="level-emoji">🌱</span>
+        <div class="level-name">유치원</div>
+        <div class="level-desc">기초 생활 단어부터</div>
+      </div>
+      <div class="level-card" data-level="elementary" onclick="selectLevel(this)">
+        <span class="level-emoji">📚</span>
+        <div class="level-name">초등</div>
+        <div class="level-desc">교과서 핵심 단어</div>
+      </div>
+      <div class="level-card" data-level="high" onclick="selectLevel(this)">
+        <span class="level-emoji">🎓</span>
+        <div class="level-name">고등</div>
+        <div class="level-desc">수능 빈출 어휘</div>
+      </div>
+      <div class="level-card" data-level="university" onclick="selectLevel(this)">
+        <span class="level-emoji">🏛️</span>
+        <div class="level-name">대학교</div>
+        <div class="level-desc">학술·전공 어휘</div>
+      </div>
+      <div class="level-card full-width" data-level="expert" onclick="selectLevel(this)">
+        <span class="level-emoji">⚡</span>
+        <div class="level-name">전문가</div>
+        <div class="level-desc">전문 분야 고급 어휘 · 비즈니스</div>
+      </div>
+    </div>
+    <button class="start-btn" id="start-btn" onclick="startGame()">게임 시작 →</button>
+  </div>
+
+  <!-- GAME -->
+  <div class="screen game-screen" id="screen-game">
+    <div class="game-header">
+      <div class="lives" id="lives-display"></div>
+      <div class="stage-info">
+        <div class="stage-label">STAGE</div>
+        <div class="stage-num" id="stage-num">1</div>
+        <div class="level-badge" id="current-level-badge">유치원</div>
+      </div>
+      <div class="best-area">
+        <div class="best-label">BEST</div>
+        <div class="best-num" id="best-num">0</div>
+      </div>
+    </div>
+    <div class="game-body">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:10%"></div>
+      </div>
+      <div class="word-card">
+        <div class="word-en" id="word-en">apple</div>
+        <div class="word-phonetic" id="word-phonetic">/ˈæpl/</div>
+      </div>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="feedback-bar" id="feedback-bar">
+        <div class="fb-title" id="fb-title"></div>
+        <div class="fb-hint" id="fb-hint"></div>
+      </div>
+    </div>
+
+    <div class="upgrade-overlay" id="upgrade-overlay">
+      <div class="upgrade-icon">🏆</div>
+      <div class="upgrade-title" id="upgrade-title">레벨 업!</div>
+      <div class="upgrade-sub" id="upgrade-sub">다음 단계로 올라갑니다</div>
+      <button class="upgrade-btn" onclick="closeUpgrade()">계속하기 →</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div class="screen gameover-screen" id="screen-gameover">
+    <div class="go-icon">💀</div>
+    <div class="go-title">게임 오버!</div>
+    <div class="go-sub" id="go-sub">아쉽지만 다시 도전해보세요</div>
+    <div class="go-stats">
+      <div class="go-stat">
+        <div class="go-stat-label">도달 스테이지</div>
+        <div class="go-stat-value accent" id="go-stage">1</div>
+      </div>
+      <div class="go-stat">
+        <div class="go-stat-label">최고 기록</div>
+        <div class="go-stat-value accent" id="go-best">0</div>
+      </div>
+      <div class="go-stat">
+        <div class="go-stat-label">맞은 문제</div>
+        <div class="go-stat-value" id="go-correct">0</div>
+      </div>
+      <div class="go-stat">
+        <div class="go-stat-label">틀린 문제</div>
+        <div class="go-stat-value" id="go-wrong">0</div>
+      </div>
+    </div>
+    <div class="go-actions">
+      <button class="retry-btn" onclick="retryGame()">다시 도전 →</button>
+      <button class="review-btn" onclick="alert('틀린 단어: ' + state.wrongWords.map(w => w.w + '(' + w.k + ')').join(', '))">틀린 단어 보기</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const LEVELS = ['kindergarten','elementary','high','university','expert','native'];
+const LEVEL_NAMES = { kindergarten:'유치원', elementary:'초등', high:'고등', university:'대학교', expert:'전문가', native:'원어민' };
+
+const WORD_BANK = {
+  kindergarten: [
+    {w:'apple',p:'/ˈæpl/',k:'사과',opts:['바나나','사과','포도','오렌지']},
+    {w:'dog',p:'/dɒɡ/',k:'강아지',opts:['고양이','강아지','새','물고기']},
+    {w:'sun',p:'/sʌn/',k:'태양',opts:['달','구름','태양','별']},
+    {w:'book',p:'/bʊk/',k:'책',opts:['책','공책','연필','지우개']},
+    {w:'water',p:'/ˈwɔːtər/',k:'물',opts:['불','물','흙','공기']},
+    {w:'happy',p:'/ˈhæpi/',k:'행복한',opts:['슬픈','화난','행복한','무서운']},
+    {w:'red',p:'/rɛd/',k:'빨간',opts:['파란','빨간','노란','초록']},
+    {w:'run',p:'/rʌn/',k:'달리다',opts:['먹다','자다','달리다','앉다']},
+  ],
+  elementary: [
+    {w:'adventure',p:'/ədˈvɛntʃər/',k:'모험',opts:['여행','모험','공부','휴식']},
+    {w:'library',p:'/ˈlaɪbrɛri/',k:'도서관',opts:['학교','병원','도서관','공원']},
+    {w:'planet',p:'/ˈplænɪt/',k:'행성',opts:['행성','별자리','달','혜성']},
+    {w:'recipe',p:'/ˈrɛsɪpi/',k:'조리법',opts:['조리법','재료','요리사','냄비']},
+    {w:'discover',p:'/dɪˈskʌvər/',k:'발견하다',opts:['잃다','숨기다','발견하다','찾다']},
+    {w:'mountain',p:'/ˈmaʊntɪn/',k:'산',opts:['강','바다','산','호수']},
+    {w:'science',p:'/ˈsaɪəns/',k:'과학',opts:['수학','과학','역사','음악']},
+    {w:'grateful',p:'/ˈɡreɪtfəl/',k:'감사하는',opts:['화난','감사하는','지루한','즐거운']},
+  ],
+  high: [
+    {w:'ambiguous',p:'/æmˈbɪɡjuəs/',k:'모호한',opts:['명확한','모호한','분명한','구체적인']},
+    {w:'eloquent',p:'/ˈɛləkwənt/',k:'웅변적인',opts:['조용한','웅변적인','말 없는','수줍은']},
+    {w:'inevitable',p:'/ɪnˈɛvɪtəbl/',k:'불가피한',opts:['피할 수 있는','불가피한','선택적인','우연한']},
+    {w:'persevere',p:'/ˌpɜːrsɪˈvɪər/',k:'인내하다',opts:['포기하다','인내하다','떠나다','무시하다']},
+    {w:'contemplate',p:'/ˈkɒntəmpleɪt/',k:'심사숙고하다',opts:['서두르다','심사숙고하다','잊다','결정하다']},
+    {w:'hypothesis',p:'/haɪˈpɒθɪsɪs/',k:'가설',opts:['결론','가설','사실','증거']},
+    {w:'nuance',p:'/ˈnjuːɑːns/',k:'미묘한 차이',opts:['큰 차이','미묘한 차이','명백한 차이','공통점']},
+    {w:'rhetoric',p:'/ˈrɛtərɪk/',k:'수사학',opts:['문법','수사학','논리학','철학']},
+  ],
+  university: [
+    {w:'paradigm',p:'/ˈpærədaɪm/',k:'패러다임',opts:['이론','패러다임','실험','분석']},
+    {w:'empirical',p:'/ɪmˈpɪrɪkəl/',k:'경험적인',opts:['이론적인','경험적인','추상적인','직관적인']},
+    {w:'dichotomy',p:'/daɪˈkɒtəmi/',k:'이분법',opts:['삼분법','이분법','연속성','통합']},
+    {w:'epistemology',p:'/ɪˌpɪstɪˈmɒlədʒi/',k:'인식론',opts:['존재론','인식론','윤리학','미학']},
+    {w:'hegemony',p:'/hɪˈɡɛməni/',k:'헤게모니',opts:['민주주의','헤게모니','평등','저항']},
+    {w:'synthesis',p:'/ˈsɪnθɪsɪs/',k:'종합',opts:['분석','종합','분리','비교']},
+    {w:'pragmatic',p:'/præɡˈmætɪk/',k:'실용적인',opts:['이상적인','실용적인','감정적인','추상적인']},
+    {w:'ambivalent',p:'/æmˈbɪvələnt/',k:'양가감정의',opts:['확신하는','양가감정의','무관심한','열정적인']},
+  ],
+  expert: [
+    {w:'solipsism',p:'/ˈsɒlɪpsɪzəm/',k:'유아론',opts:['유아론','이원론','허무주의','결정론']},
+    {w:'prelapsarian',p:'/ˌpriːlæpˈsɛərɪən/',k:'타락 이전의',opts:['타락한','타락 이전의','신성한','세속적인']},
+    {w:'concatenation',p:'/kɒnˌkætɪˈneɪʃən/',k:'연쇄',opts:['분리','연쇄','순환','단절']},
+    {w:'apocryphal',p:'/əˈpɒkrɪfəl/',k:'진위가 의심스러운',opts:['진위가 의심스러운','검증된','역사적인','신화적인']},
+    {w:'laconic',p:'/ləˈkɒnɪk/',k:'간결한',opts:['장황한','간결한','복잡한','모호한']},
+    {w:'sycophant',p:'/ˈsɪkəfænt/',k:'아첨꾼',opts:['비평가','아첨꾼','지도자','반대자']},
+    {w:'tendentious',p:'/tɛnˈdɛnʃəs/',k:'편향된',opts:['중립적인','편향된','균형잡힌','객관적인']},
+    {w:'weltanschauung',p:'/ˈvɛltɑːnˌʃaʊʊŋ/',k:'세계관',opts:['세계관','현실관','종교관','가치관']},
+  ],
+};
+
+let state = {
+  screen: 'login', selectedLevel: null, currentLevel: null,
+  stage: 1, bestStage: 0, lives: 3, maxLives: 3,
+  correctCount: 0, wrongCount: 0,
+  currentWord: null, answered: false,
+  wrongWords: [], usedWords: [],
+};
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function goOnboarding() { show('onboarding'); }
+
+function selectLevel(el) {
+  document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedLevel = el.dataset.level;
+  const btn = document.getElementById('start-btn');
+  btn.classList.add('enabled');
+}
+
+function startGame() {
+  if (!state.selectedLevel) return;
+  state.currentLevel = state.selectedLevel;
+  state.stage = 1; state.lives = 3; state.correctCount = 0; state.wrongCount = 0;
+  state.wrongWords = []; state.usedWords = [];
+  show('game');
+  renderGame();
+}
+
+function getWordsForLevel(level) {
+  return WORD_BANK[level] || WORD_BANK['high'];
+}
+
+function pickWord() {
+  const words = getWordsForLevel(state.currentLevel);
+  let available = words.filter(w => !state.usedWords.includes(w.w));
+  if (available.length === 0) { state.usedWords = []; available = words; }
+  const w = available[Math.floor(Math.random() * available.length)];
+  state.usedWords.push(w.w);
+  return w;
+}
+
+function renderGame() {
+  renderLives();
+  document.getElementById('stage-num').textContent = state.stage;
+  document.getElementById('best-num').textContent = state.bestStage;
+  document.getElementById('current-level-badge').textContent = LEVEL_NAMES[state.currentLevel] || state.currentLevel;
+  const progress = Math.min(100, ((state.stage % 10) / 10) * 100 + 10);
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  const word = pickWord();
+  state.currentWord = word;
+  state.answered = false;
+
+  document.getElementById('word-en').textContent = word.w;
+  document.getElementById('word-phonetic').textContent = word.p;
+
+  const fb = document.getElementById('feedback-bar');
+  fb.style.display = 'none'; fb.className = 'feedback-bar';
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const shuffled = [...word.opts].sort(() => Math.random() - 0.5);
+  shuffled.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = '<span class="opt-num">' + (i+1) + '</span>' + opt;
+    btn.onclick = () => checkAnswer(opt, word.k, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function renderLives() {
+  const el = document.getElementById('lives-display');
+  el.innerHTML = '';
+  for (let i = 0; i < state.maxLives; i++) {
+    const h = document.createElement('span');
+    h.className = 'heart' + (i >= state.lives ? ' lost' : '');
+    h.textContent = '❤';
+    el.appendChild(h);
+  }
+}
+
+function checkAnswer(chosen, correct, btn) {
+  if (state.answered) return;
+  state.answered = true;
+
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => b.classList.add('disabled'));
+
+  const fb = document.getElementById('feedback-bar');
+  const fbTitle = document.getElementById('fb-title');
+  const fbHint = document.getElementById('fb-hint');
+
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    state.correctCount++;
+    state.stage++;
+    if (state.stage > state.bestStage) state.bestStage = state.stage;
+    fb.className = 'feedback-bar correct-fb';
+    fb.style.display = 'block';
+    fbTitle.textContent = '정답! +1 스테이지';
+    fbHint.textContent = state.currentWord.w + ' = ' + correct;
+    setTimeout(checkLevelUp, 900);
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b => { if (b.textContent.includes(correct)) b.classList.add('correct'); });
+    state.lives--;
+    state.wrongCount++;
+    if (!state.wrongWords.find(w => w.w === state.currentWord.w)) {
+      state.wrongWords.push(state.currentWord);
+    }
+    fb.className = 'feedback-bar wrong-fb';
+    fb.style.display = 'block';
+    fbTitle.textContent = '틀렸어요 — ❤ -1';
+    fbHint.textContent = '정답: ' + correct;
+    renderLives();
+    if (state.lives <= 0) {
+      setTimeout(showGameOver, 1100);
+    } else {
+      setTimeout(renderGame, 1100);
+    }
+  }
+}
+
+function checkLevelUp() {
+  const levelOrder = ['kindergarten','elementary','high','university','expert','native'];
+  const idx = levelOrder.indexOf(state.currentLevel);
+
+  if (state.stage % 50 === 1 && state.stage > 1 && idx < levelOrder.length - 1) {
+    const nextLevel = levelOrder[idx + 1];
+    state.currentLevel = nextLevel;
+    const overlay = document.getElementById('upgrade-overlay');
+    document.getElementById('upgrade-title').textContent = LEVEL_NAMES[nextLevel] + ' 레벨 달성!';
+    document.getElementById('upgrade-sub').textContent = 'Stage ' + state.stage + ' 돌파!\n이제 ' + LEVEL_NAMES[nextLevel] + ' 단어가 출제됩니다.';
+    overlay.classList.add('show');
+    return;
+  }
+
+  if (state.stage % 10 === 1 && state.stage > 1) {
+    const overlay = document.getElementById('upgrade-overlay');
+    document.getElementById('upgrade-title').textContent = 'Stage ' + (state.stage - 1) + ' 클리어!';
+    document.getElementById('upgrade-sub').textContent = '난이도가 조금 높아집니다.\n계속 도전하세요!';
+    overlay.classList.add('show');
+    return;
+  }
+
+  renderGame();
+}
+
+function closeUpgrade() {
+  document.getElementById('upgrade-overlay').classList.remove('show');
+  renderGame();
+}
+
+function showGameOver() {
+  document.getElementById('go-stage').textContent = state.stage;
+  document.getElementById('go-best').textContent = state.bestStage;
+  document.getElementById('go-correct').textContent = state.correctCount;
+  document.getElementById('go-wrong').textContent = state.wrongCount;
+  const sub = document.getElementById('go-sub');
+  if (state.stage >= 50) sub.textContent = '대단해요! ' + LEVEL_NAMES[state.currentLevel] + ' 레벨까지 올라갔어요!';
+  else if (state.stage >= 20) sub.textContent = '잘 했어요! 조금만 더 연습하면 돼요.';
+  else sub.textContent = '아쉽지만 다시 도전해보세요!';
+  show('gameover');
+}
+
+function retryGame() { startGame(); }
+</script>
+</body>
+</html>
