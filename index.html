@@ -113,8 +113,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
 
 .word-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radlg);padding:2rem 1.5rem;text-align:center;width:100%;margin-bottom:1.25rem;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .word-card::after{content:'';position:absolute;bottom:-40px;left:-40px;width:120px;height:120px;border-radius:50%;background:var(--pbg);pointer-events:none}
-.word-en{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--text);letter-spacing:3px;line-height:1;text-shadow:0 0 40px rgba(108,92,231,0.3)}
-.word-ph{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text3);margin-top:4px}
+.word-en{font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:var(--text);letter-spacing:-1.5px;line-height:1;text-shadow:0 0 40px rgba(108,92,231,0.25)}
 .ld-dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--p);margin:0 2px;animation:dp 1.2s ease-in-out infinite}
 .ld-dots span:nth-child(2){animation-delay:.2s}
 .ld-dots span:nth-child(3){animation-delay:.4s}
@@ -281,7 +280,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
       </div>
       <div id="word-area">
         <div class="word-en" id="word-en">—</div>
-        <div class="word-ph" id="word-ph"></div>
       </div>
     </div>
     <div class="opts" id="opts"></div>
@@ -664,7 +662,6 @@ function nextWord(){
   G.curWord=w;
   G.answered=false;
   $('word-en').textContent=w.w;
-  $('word-ph').textContent=w.p;
   $('fb').className='fb';
   const grid=$('opts');grid.innerHTML='';
   const shuffled=[...w.o].sort(()=>Math.random()-.5);
