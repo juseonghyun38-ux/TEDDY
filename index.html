@@ -227,27 +227,27 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
   <div class="level-list" id="level-list">
     <div class="lv-item" data-level="kindergarten" onclick="selectLevel(this)">
       <div class="lv-icon">🌱</div>
-      <div class="lv-text"><div class="lv-name">유치원</div><div class="lv-desc">cat, big, run, happy… 기초 생활 단어 100+</div></div>
+      <div class="lv-text"><div class="lv-name">유치원</div><div class="lv-desc">cat, big, run, happy… 기초 생활 단어 80개</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="elementary" onclick="selectLevel(this)">
       <div class="lv-icon">📚</div>
-      <div class="lv-text"><div class="lv-name">초등</div><div class="lv-desc">adventure, discover… 교과서 어휘 100+</div></div>
+      <div class="lv-text"><div class="lv-name">초등</div><div class="lv-desc">adventure, discover… 교과서 어휘 100개</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="high" onclick="selectLevel(this)">
       <div class="lv-icon">🎓</div>
-      <div class="lv-text"><div class="lv-name">고등</div><div class="lv-desc">ambiguous, eloquent… 수능 빈출 100+</div></div>
+      <div class="lv-text"><div class="lv-name">고등</div><div class="lv-desc">ambiguous, eloquent… 수능 빈출 120개</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="university" onclick="selectLevel(this)">
       <div class="lv-icon">🏛️</div>
-      <div class="lv-text"><div class="lv-name">대학교</div><div class="lv-desc">paradigm, hegemony… 학술 어휘 100+</div></div>
+      <div class="lv-text"><div class="lv-name">대학교</div><div class="lv-desc">paradigm, hegemony… 학술 어휘 130개</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="expert" onclick="selectLevel(this)">
       <div class="lv-icon">⚡</div>
-      <div class="lv-text"><div class="lv-name">전문가</div><div class="lv-desc">solipsism, laconic… 고급·원어민 100+</div></div>
+      <div class="lv-text"><div class="lv-name">전문가</div><div class="lv-desc">solipsism, laconic… 고급·원어민 140개</div></div>
       <div class="lv-chk"></div>
     </div>
   </div>
@@ -275,6 +275,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
       <div class="best-lbl">BEST</div>
       <div class="best-num" id="best-num">0</div>
     </div>
+  </div>
+  <div style="padding:8px 18px;border-bottom:1px solid var(--line);display:flex;gap:8px">
+    <button onclick="quitGame()" style="background:var(--bg3);border:1px solid var(--line);color:var(--text3);font-size:12px;padding:5px 12px;border-radius:999px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">← 그만하기</button>
   </div>
   <div class="game-body">
     <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:5%"></div></div>
@@ -402,6 +405,34 @@ kindergarten:[
   {w:'door',p:'/dɔːr/',k:'문',o:['문','창문','벽','천장']},
   {w:'eye',p:'/aɪ/',k:'눈',o:['귀','코','눈','입']},
   {w:'hand',p:'/hænd/',k:'손',o:['발','손','머리','다리']},
+  {w:'swim',p:'/swɪm/',k:'수영하다',o:['날다','수영하다','달리다','걷다']},
+  {w:'sing',p:'/sɪŋ/',k:'노래하다',o:['춤추다','노래하다','그리다','읽다']},
+  {w:'draw',p:'/drɔː/',k:'그리다',o:['쓰다','자르다','그리다','붙이다']},
+  {w:'clean',p:'/kliːn/',k:'깨끗한',o:['더러운','깨끗한','젖은','마른']},
+  {w:'dirty',p:'/ˈdɜːrti/',k:'더러운',o:['깨끗한','더러운','밝은','어두운']},
+  {w:'wet',p:'/wɛt/',k:'젖은',o:['마른','젖은','뜨거운','차가운']},
+  {w:'dry',p:'/draɪ/',k:'마른',o:['젖은','마른','따뜻한','시원한']},
+  {w:'soft',p:'/sɒft/',k:'부드러운',o:['딱딱한','부드러운','거친','날카로운']},
+  {w:'hard',p:'/hɑːrd/',k:'딱딱한',o:['딱딱한','부드러운','가벼운','무거운']},
+  {w:'light',p:'/laɪt/',k:'가벼운',o:['무거운','가벼운','어두운','밝은']},
+  {w:'heavy',p:'/ˈhɛvi/',k:'무거운',o:['가벼운','무거운','높은','낮은']},
+  {w:'loud',p:'/laʊd/',k:'시끄러운',o:['조용한','시끄러운','부드러운','빠른']},
+  {w:'quiet',p:'/ˈkwaɪət/',k:'조용한',o:['시끄러운','조용한','빠른','느린']},
+  {w:'hungry',p:'/ˈhʌŋɡri/',k:'배고픈',o:['배부른','배고픈','목마른','졸린']},
+  {w:'tired',p:'/ˈtaɪərd/',k:'피곤한',o:['활기찬','피곤한','슬픈','행복한']},
+  {w:'sick',p:'/sɪk/',k:'아픈',o:['건강한','아픈','피곤한','슬픈']},
+  {w:'cute',p:'/kjuːt/',k:'귀여운',o:['무서운','귀여운','못생긴','평범한']},
+  {w:'funny',p:'/ˈfʌni/',k:'웃긴',o:['슬픈','웃긴','무서운','지루한']},
+  {w:'strong',p:'/strɒŋ/',k:'강한',o:['약한','강한','빠른','느린']},
+  {w:'weak',p:'/wiːk/',k:'약한',o:['강한','약한','빠른','느린']},
+  {w:'win',p:'/wɪn/',k:'이기다',o:['지다','이기다','끝내다','시작하다']},
+  {w:'lose',p:'/luːz/',k:'지다',o:['이기다','지다','그리다','달리다']},
+  {w:'cry',p:'/kraɪ/',k:'울다',o:['웃다','울다','소리치다','속삭이다']},
+  {w:'laugh',p:'/læf/',k:'웃다',o:['울다','웃다','노래하다','침묵하다']},
+  {w:'throw',p:'/θroʊ/',k:'던지다',o:['잡다','던지다','차다','밀다']},
+  {w:'catch',p:'/kætʃ/',k:'잡다',o:['던지다','잡다','놓다','떨어뜨리다']},
+  {w:'help',p:'/hɛlp/',k:'돕다',o:['방해하다','돕다','떠나다','무시하다']},
+  {w:'share',p:'/ʃɛr/',k:'나누다',o:['빼앗다','나누다','숨기다','잃다']},
 ],
 elementary:[
   {w:'adventure',p:'/ədˈvɛntʃər/',k:'모험',o:['여행','모험','공부','휴식']},
@@ -454,6 +485,55 @@ elementary:[
   {w:'honest',p:'/ˈɒnɪst/',k:'정직한',o:['거짓된','정직한','친절한','용감한']},
   {w:'solution',p:'/səˈluːʃən/',k:'해결책',o:['문제','해결책','원인','결과']},
   {w:'freedom',p:'/ˈfriːdəm/',k:'자유',o:['자유','구속','평화','전쟁']},
+  {w:'achieve',p:'/əˈtʃiːv/',k:'달성하다',o:['포기하다','달성하다','시작하다','방해하다']},
+  {w:'represent',p:'/ˌrɛprɪˈzɛnt/',k:'대표하다',o:['숨다','대표하다','거부하다','따르다']},
+  {w:'produce',p:'/prəˈdjuːs/',k:'생산하다',o:['소비하다','생산하다','파괴하다','빌리다']},
+  {w:'transport',p:'/ˈtrænspɔːrt/',k:'운송',o:['저장','운송','제조','소비']},
+  {w:'communicate',p:'/kəˈmjuːnɪkeɪt/',k:'소통하다',o:['침묵하다','소통하다','싸우다','떠나다']},
+  {w:'consider',p:'/kənˈsɪdər/',k:'고려하다',o:['무시하다','고려하다','반대하다','망각하다']},
+  {w:'influence',p:'/ˈɪnfluəns/',k:'영향',o:['결과','영향','원인','변화']},
+  {w:'observe',p:'/əbˈzɜːrv/',k:'관찰하다',o:['무시하다','관찰하다','상상하다','변경하다']},
+  {w:'examine',p:'/ɪɡˈzæmɪn/',k:'조사하다',o:['무시하다','조사하다','만들다','파괴하다']},
+  {w:'contribute',p:'/kənˈtrɪbjuːt/',k:'기여하다',o:['빼앗다','기여하다','방해하다','떠나다']},
+  {w:'develop',p:'/dɪˈvɛləp/',k:'발전하다',o:['후퇴하다','발전하다','멈추다','시작하다']},
+  {w:'survive',p:'/səˈvaɪv/',k:'생존하다',o:['죽다','생존하다','도망치다','숨다']},
+  {w:'inspire',p:'/ɪnˈspaɪər/',k:'영감을 주다',o:['낙담시키다','영감을 주다','명령하다','강요하다']},
+  {w:'accident',p:'/ˈæksɪdənt/',k:'사고',o:['계획','사고','행사','결과']},
+  {w:'nervous',p:'/ˈnɜːrvəs/',k:'긴장된',o:['침착한','긴장된','자신감 있는','행복한']},
+  {w:'patient',p:'/ˈpeɪʃənt/',k:'인내심 있는',o:['성급한','인내심 있는','화난','슬픈']},
+  {w:'confident',p:'/ˈkɒnfɪdənt/',k:'자신감 있는',o:['소심한','자신감 있는','슬픈','피곤한']},
+  {w:'achieve',p:'/əˈtʃiːv/',k:'이루다',o:['포기하다','이루다','잃다','기다리다']},
+  {w:'borrow',p:'/ˈbɒroʊ/',k:'빌리다',o:['돌려주다','빌리다','사다','팔다']},
+  {w:'punish',p:'/ˈpʌnɪʃ/',k:'처벌하다',o:['보상하다','처벌하다','칭찬하다','무시하다']},
+  {w:'recognize',p:'/ˈrɛkəɡnaɪz/',k:'알아보다',o:['모르다','알아보다','잊다','만나다']},
+  {w:'pretend',p:'/prɪˈtɛnd/',k:'척하다',o:['사실대로 말하다','척하다','고백하다','약속하다']},
+  {w:'punish',p:'/ˈpʌnɪʃ/',k:'벌주다',o:['칭찬하다','벌주다','도와주다','격려하다']},
+  {w:'argue',p:'/ˈɑːrɡjuː/',k:'논쟁하다',o:['동의하다','논쟁하다','침묵하다','웃다']},
+  {w:'prevent',p:'/prɪˈvɛnt/',k:'예방하다',o:['허용하다','예방하다','촉진하다','무시하다']},
+  {w:'announce',p:'/əˈnaʊns/',k:'발표하다',o:['숨기다','발표하다','취소하다','변경하다']},
+  {w:'generous',p:'/ˈdʒɛnərəs/',k:'관대한',o:['인색한','관대한','이기적인','냉담한']},
+  {w:'miserable',p:'/ˈmɪzərəbl/',k:'비참한',o:['행복한','비참한','평온한','흥분된']},
+  {w:'polite',p:'/pəˈlaɪt/',k:'예의 바른',o:['무례한','예의 바른','조용한','시끄러운']},
+  {w:'rude',p:'/ruːd/',k:'무례한',o:['예의 바른','무례한','친절한','조심스러운']},
+  {w:'ancient',p:'/ˈeɪnʃənt/',k:'고대의',o:['현대의','미래의','고대의','중세의']},
+  {w:'modern',p:'/ˈmɒdərn/',k:'현대의',o:['고대의','현대의','미래의','중세의']},
+  {w:'technology',p:'/tɛkˈnɒlədʒi/',k:'기술',o:['과학','기술','예술','종교']},
+  {w:'natural',p:'/ˈnætʃərəl/',k:'자연스러운',o:['인공적인','자연스러운','이상한','복잡한']},
+  {w:'artificial',p:'/ˌɑːrtɪˈfɪʃəl/',k:'인공적인',o:['자연스러운','인공적인','단순한','복잡한']},
+  {w:'similar',p:'/ˈsɪmɪlər/',k:'비슷한',o:['다른','비슷한','반대의','새로운']},
+  {w:'different',p:'/ˈdɪfərənt/',k:'다른',o:['같은','다른','비슷한','새로운']},
+  {w:'necessary',p:'/ˈnɛsəsɛri/',k:'필요한',o:['불필요한','필요한','선택적인','좋은']},
+  {w:'possible',p:'/ˈpɒsɪbl/',k:'가능한',o:['불가능한','가능한','확실한','위험한']},
+  {w:'impossible',p:'/ɪmˈpɒsɪbl/',k:'불가능한',o:['가능한','불가능한','어려운','쉬운']},
+  {w:'volunteer',p:'/ˌvɒlənˈtɪər/',k:'자원봉사',o:['의무','자원봉사','직업','취미']},
+  {w:'opinion',p:'/əˈpɪnjən/',k:'의견',o:['사실','의견','진실','증거']},
+  {w:'knowledge',p:'/ˈnɒlɪdʒ/',k:'지식',o:['무지','지식','경험','감각']},
+  {w:'experience',p:'/ɪkˈspɪəriəns/',k:'경험',o:['이론','경험','상상','기억']},
+  {w:'decision',p:'/dɪˈsɪʒən/',k:'결정',o:['망설임','결정','포기','시작']},
+  {w:'responsible',p:'/rɪˈspɒnsɪbl/',k:'책임감 있는',o:['무책임한','책임감 있는','냉담한','소심한']},
+  {w:'concentrate',p:'/ˈkɒnsəntreɪt/',k:'집중하다',o:['산만해지다','집중하다','포기하다','쉬다']},
+  {w:'forgive',p:'/fərˈɡɪv/',k:'용서하다',o:['원망하다','용서하다','잊다','기억하다']},
+  {w:'appreciate',p:'/əˈpriːʃieɪt/',k:'감사하다',o:['무시하다','감사하다','비판하다','질투하다']},
 ],
 high:[
   {w:'ambiguous',p:'/æmˈbɪɡjuəs/',k:'모호한',o:['명확한','모호한','분명한','구체적인']},
@@ -506,8 +586,77 @@ high:[
   {w:'contradict',p:'/ˌkɒntrəˈdɪkt/',k:'반박하다',o:['동의하다','반박하다','설명하다','확인하다']},
   {w:'perceive',p:'/pərˈsiːv/',k:'인식하다',o:['무시하다','인식하다','잊다','기억하다']},
   {w:'reinforce',p:'/ˌriːɪnˈfɔːrs/',k:'강화하다',o:['약화시키다','강화하다','유지하다','제거하다']},
+  {w:'abstract',p:'/ˈæbstrækt/',k:'추상적인',o:['구체적인','추상적인','단순한','복잡한']},
+  {w:'concrete',p:'/ˈkɒnkriːt/',k:'구체적인',o:['추상적인','구체적인','모호한','애매한']},
+  {w:'exceed',p:'/ɪkˈsiːd/',k:'초과하다',o:['부족하다','초과하다','유지하다','감소하다']},
+  {w:'assume',p:'/əˈsjuːm/',k:'가정하다',o:['증명하다','가정하다','부정하다','확인하다']},
+  {w:'deduce',p:'/dɪˈdjuːs/',k:'추론하다',o:['암기하다','추론하다','포기하다','반복하다']},
+  {w:'infer',p:'/ɪnˈfɜːr/',k:'추론하다',o:['단정하다','추론하다','무시하다','주장하다']},
+  {w:'assert',p:'/əˈsɜːrt/',k:'주장하다',o:['부정하다','주장하다','포기하다','인정하다']},
+  {w:'refute',p:'/rɪˈfjuːt/',k:'반박하다',o:['동의하다','반박하다','설명하다','칭찬하다']},
+  {w:'concede',p:'/kənˈsiːd/',k:'인정하다',o:['부정하다','인정하다','반박하다','주장하다']},
+  {w:'elaborate',p:'/ɪˈlæbərɪt/',k:'정교한',o:['단순한','정교한','평범한','거친']},
+  {w:'comprehensive',p:'/ˌkɒmprɪˈhɛnsɪv/',k:'포괄적인',o:['부분적인','포괄적인','단편적인','편향된']},
+  {w:'ambiguity',p:'/ˌæmbɪˈɡjuːɪti/',k:'모호함',o:['명확함','모호함','정확함','단순함']},
+  {w:'validity',p:'/vəˈlɪdɪti/',k:'타당성',o:['오류','타당성','의심','추측']},
+  {w:'relevance',p:'/ˈrɛlɪvəns/',k:'관련성',o:['무관함','관련성','중요성','명확성']},
+  {w:'bias',p:'/ˈbaɪəs/',k:'편견',o:['공정함','편견','지식','경험']},
+  {w:'stereotype',p:'/ˈstɛriətaɪp/',k:'고정관념',o:['개인차','고정관념','다양성','개방성']},
+  {w:'interpret',p:'/ɪnˈtɜːrprɪt/',k:'해석하다',o:['무시하다','해석하다','번역하다','읽다']},
+  {w:'metaphor',p:'/ˈmɛtəfɔːr/',k:'은유',o:['직유','은유','반어','과장']},
+  {w:'symbolize',p:'/ˈsɪmbəlaɪz/',k:'상징하다',o:['숨기다','상징하다','나타내다','부정하다']},
+  {w:'imply',p:'/ɪmˈplaɪ/',k:'암시하다',o:['직접 말하다','암시하다','부정하다','설명하다']},
+  {w:'consequence',p:'/ˈkɒnsɪkwəns/',k:'결과',o:['원인','결과','과정','목적']},
+  {w:'circumstance',p:'/ˈsɜːrkəmstæns/',k:'상황',o:['결과','상황','원인','목적']},
+  {w:'exception',p:'/ɪkˈsɛpʃən/',k:'예외',o:['규칙','예외','원칙','법칙']},
+  {w:'fundamental',p:'/ˌfʌndəˈmɛntəl/',k:'근본적인',o:['표면적인','근본적인','부차적인','임시적인']},
+  {w:'radical',p:'/ˈrædɪkəl/',k:'근본적인',o:['온건한','근본적인','점진적인','보수적인']},
+  {w:'conservative',p:'/kənˈsɜːrvətɪv/',k:'보수적인',o:['진보적인','보수적인','급진적인','중립적인']},
+  {w:'progressive',p:'/prəˈɡrɛsɪv/',k:'진보적인',o:['보수적인','진보적인','중립적인','전통적인']},
+  {w:'moderate',p:'/ˈmɒdərɪt/',k:'온건한',o:['극단적인','온건한','급진적인','보수적인']},
+  {w:'advocate',p:'/ˈædvəkeɪt/',k:'지지하다',o:['반대하다','지지하다','무시하다','비판하다']},
+  {w:'oppose',p:'/əˈpoʊz/',k:'반대하다',o:['지지하다','반대하다','무시하다','중립을 지키다']},
+  {w:'compromise',p:'/ˈkɒmprəmaɪz/',k:'타협',o:['갈등','타협','고집','굴복']},
+  {w:'negotiate',p:'/nɪˈɡoʊʃieɪt/',k:'협상하다',o:['강요하다','협상하다','포기하다','무시하다']},
+  {w:'resolve',p:'/rɪˈzɒlv/',k:'해결하다',o:['악화시키다','해결하다','피하다','복잡하게 하다']},
+  {w:'generate',p:'/ˈdʒɛnəreɪt/',k:'생성하다',o:['소멸시키다','생성하다','유지하다','변형하다']},
+  {w:'implement',p:'/ˈɪmplɪmɛnt/',k:'실행하다',o:['계획하다','실행하다','포기하다','논의하다']},
+  {w:'evaluate',p:'/ɪˈvæljueɪt/',k:'평가하다',o:['무시하다','평가하다','수정하다','승인하다']},
+  {w:'investigate',p:'/ɪnˈvɛstɪɡeɪt/',k:'조사하다',o:['숨기다','조사하다','무시하다','발표하다']},
+  {w:'demonstrate',p:'/ˈdɛmənstreɪt/',k:'증명하다',o:['숨기다','증명하다','부정하다','주장하다']},
+  {w:'establish',p:'/ɪˈstæblɪʃ/',k:'확립하다',o:['해체하다','확립하다','의심하다','약화시키다']},
+  {w:'transform',p:'/trænsˈfɔːrm/',k:'변형하다',o:['유지하다','변형하다','파괴하다','복원하다']},
+  {w:'collapse',p:'/kəˈlæps/',k:'붕괴하다',o:['번성하다','붕괴하다','유지하다','성장하다']},
+  {w:'expand',p:'/ɪkˈspænd/',k:'확장하다',o:['축소하다','확장하다','유지하다','파괴하다']},
+  {w:'diminish',p:'/dɪˈmɪnɪʃ/',k:'줄어들다',o:['증가하다','줄어들다','유지하다','변화하다']},
+  {w:'accumulate',p:'/əˈkjuːmjʊleɪt/',k:'축적하다',o:['소비하다','축적하다','분배하다','잃다']},
+  {w:'dominant',p:'/ˈdɒmɪnənt/',k:'지배적인',o:['종속적인','지배적인','평등한','중립적인']},
+  {w:'significant',p:'/sɪɡˈnɪfɪkənt/',k:'중요한',o:['사소한','중요한','평범한','일시적인']},
+  {w:'obscure',p:'/əbˈskjʊər/',k:'불분명한',o:['명확한','불분명한','단순한','직접적인']},
+  {w:'coherence',p:'/koʊˈhɪərəns/',k:'일관성',o:['모순','일관성','복잡성','다양성']},
+  {w:'inference',p:'/ˈɪnfərəns/',k:'추론',o:['사실','추론','증거','결론']},
+  {w:'rationale',p:'/ˌræʃəˈnɑːl/',k:'근거',o:['결과','근거','결론','의심']},
+  {w:'premise',p:'/ˈprɛmɪs/',k:'전제',o:['결론','전제','증거','주장']},
+  {w:'autonomy',p:'/ɔːˈtɒnəmi/',k:'자율성',o:['타율','자율성','의존','통제']},
+  {w:'hierarchy',p:'/ˈhaɪərɑːrki/',k:'위계질서',o:['평등','위계질서','혼란','조화']},
+  {w:'precedent',p:'/ˈprɛsɪdənt/',k:'전례',o:['혁신','전례','규칙','예외']},
+  {w:'paramount',p:'/ˈpærəmaʊnt/',k:'최고의',o:['사소한','최고의','평범한','부차적인']},
+  {w:'intangible',p:'/ɪnˈtændʒɪbl/',k:'무형의',o:['유형의','무형의','물질적인','구체적인']},
+  {w:'ambiguous',p:'/æmˈbɪɡjuəs/',k:'모호한',o:['명백한','모호한','정확한','구체적인']},
+  {w:'plausible',p:'/ˈplɔːzɪbl/',k:'그럴듯한',o:['터무니없는','그럴듯한','확실한','불가능한']},
+  {w:'cynical',p:'/ˈsɪnɪkəl/',k:'냉소적인',o:['낙관적인','냉소적인','감정적인','이상적인']},
+  {w:'empathy',p:'/ˈɛmpəθi/',k:'공감',o:['무관심','공감','동정','혐오']},
+  {w:'resilience',p:'/rɪˈzɪliəns/',k:'회복력',o:['취약성','회복력','저항','적응']},
+  {w:'initiative',p:'/ɪˈnɪʃɪətɪv/',k:'주도권',o:['수동성','주도권','복종','포기']},
+  {w:'perseverance',p:'/ˌpɜːrsɪˈvɪərəns/',k:'인내',o:['포기','인내','충동','게으름']},
+  {w:'eloquence',p:'/ˈɛləkwəns/',k:'웅변',o:['침묵','웅변','더듬거림','냉담']},
+  {w:'skeptical',p:'/ˈskɛptɪkəl/',k:'회의적인',o:['순진한','회의적인','낙관적인','맹목적인']},
+  {w:'conceive',p:'/kənˈsiːv/',k:'상상하다',o:['잊다','상상하다','기억하다','부정하다']},
+  {w:'portray',p:'/pɔːrˈtreɪ/',k:'묘사하다',o:['숨기다','묘사하다','왜곡하다','부정하다']},
+  {w:'illuminate',p:'/ɪˈluːmɪneɪt/',k:'밝히다',o:['숨기다','밝히다','왜곡하다','복잡하게 하다']},
+  {w:'deteriorate',p:'/dɪˈtɪəriəreɪt/',k:'악화하다',o:['향상되다','악화하다','유지되다','변화하다']},
+  {w:'alleviate',p:'/əˈliːvieɪt/',k:'완화하다',o:['악화시키다','완화하다','무시하다','강화하다']},
 ],
-university:[
   {w:'paradigm',p:'/ˈpærədaɪm/',k:'패러다임',o:['이론','패러다임','실험','분석']},
   {w:'empirical',p:'/ɪmˈpɪrɪkəl/',k:'경험적인',o:['이론적인','경험적인','추상적인','직관적인']},
   {w:'dichotomy',p:'/daɪˈkɒtəmi/',k:'이분법',o:['삼분법','이분법','연속성','통합']},
@@ -558,6 +707,45 @@ university:[
   {w:'logocentrism',p:'/ˌlɒɡoʊˈsɛntrɪzəm/',k:'로고스중심주의',o:['음성중심주의','로고스중심주의','글쓰기중심주의','이미지중심주의']},
   {w:'intertext',p:'/ˈɪntərˌtɛkst/',k:'상호텍스트',o:['원본','상호텍스트','패러디','인용']},
   {w:'deconstruction',p:'/ˌdiːkənˈstrʌkʃən/',k:'해체',o:['구성','해체','분석','통합']},
+  {w:'anthropocentrism',p:'/ˌænθrəpoʊˈsɛntrɪzəm/',k:'인간중심주의',o:['생태중심주의','인간중심주의','신중심주의','자연중심주의']},
+  {w:'intersubjectivity',p:'/ˌɪntərsʌbˌdʒɛktɪˈvɪti/',k:'상호주관성',o:['객관성','상호주관성','주관성','보편성']},
+  {w:'teleological',p:'/ˌtɛliəˈlɒdʒɪkəl/',k:'목적론적인',o:['인과론적인','목적론적인','우연론적인','결정론적인']},
+  {w:'phenomenological',p:'/fɪˌnɒmɪnəˈlɒdʒɪkəl/',k:'현상학적인',o:['경험적인','현상학적인','분석적인','실증적인']},
+  {w:'epistemological',p:'/ɪˌpɪstɪməˈlɒdʒɪkəl/',k:'인식론적인',o:['존재론적인','인식론적인','윤리학적인','미학적인']},
+  {w:'ontological',p:'/ˌɒntəˈlɒdʒɪkəl/',k:'존재론적인',o:['인식론적인','존재론적인','논리학적인','윤리학적인']},
+  {w:'hermeneutical',p:'/ˌhɜːrmɪˈnjuːtɪkəl/',k:'해석학적인',o:['분석적인','해석학적인','귀납적인','연역적인']},
+  {w:'axiological',p:'/ˌæksɪəˈlɒdʒɪkəl/',k:'가치론적인',o:['사실적인','가치론적인','경험적인','이론적인']},
+  {w:'dialectical',p:'/ˌdaɪəˈlɛktɪkəl/',k:'변증법적인',o:['귀납적인','변증법적인','연역적인','분석적인']},
+  {w:'structuralism',p:'/ˈstrʌktʃərəlɪzəm/',k:'구조주의',o:['후기구조주의','구조주의','해체주의','기능주의']},
+  {w:'poststructuralism',p:'/poʊstˈstrʌktʃərəlɪzəm/',k:'후기구조주의',o:['구조주의','후기구조주의','해체주의','모더니즘']},
+  {w:'functionalism',p:'/ˈfʌŋkʃənəlɪzəm/',k:'기능주의',o:['구조주의','기능주의','형식주의','관념주의']},
+  {w:'essentialism',p:'/ɪˈsɛnʃəlɪzəm/',k:'본질주의',o:['반본질주의','본질주의','구성주의','허무주의']},
+  {w:'constructivism',p:'/kənˈstrʌktɪvɪzəm/',k:'구성주의',o:['본질주의','구성주의','실재론','관념론']},
+  {w:'positivism',p:'/ˈpɒzɪtɪvɪzəm/',k:'실증주의',o:['관념론','실증주의','낭만주의','신비주의']},
+  {w:'empiricism',p:'/ɪmˈpɪrɪsɪzəm/',k:'경험론',o:['합리론','경험론','선험론','직관론']},
+  {w:'rationalism',p:'/ˈræʃənəlɪzəm/',k:'합리론',o:['경험론','합리론','회의론','허무주의']},
+  {w:'materialism',p:'/məˈtɪəriəlɪzəm/',k:'유물론',o:['관념론','유물론','이원론','일원론']},
+  {w:'idealism',p:'/aɪˈdɪəlɪzəm/',k:'관념론',o:['유물론','관념론','현실주의','실용주의']},
+  {w:'dualism',p:'/ˈdjuːəlɪzəm/',k:'이원론',o:['일원론','이원론','다원론','허무주의']},
+  {w:'monism',p:'/ˈmɒnɪzəm/',k:'일원론',o:['이원론','일원론','다원론','상대주의']},
+  {w:'relativism',p:'/ˈrɛlətɪvɪzəm/',k:'상대주의',o:['절대주의','상대주의','허무주의','실용주의']},
+  {w:'absolutism',p:'/ˈæbsəluːtɪzəm/',k:'절대주의',o:['상대주의','절대주의','다원주의','회의주의']},
+  {w:'nihilism',p:'/ˈnaɪɪlɪzəm/',k:'허무주의',o:['실존주의','허무주의','낙관주의','이상주의']},
+  {w:'existentialism',p:'/ˌɛɡzɪˈstɛnʃəlɪzəm/',k:'실존주의',o:['허무주의','실존주의','이상주의','낙관주의']},
+  {w:'utilitarianism',p:'/juːˌtɪlɪˈtɛəriənɪzəm/',k:'공리주의',o:['의무론','공리주의','덕 윤리학','계약론']},
+  {w:'consequentialism',p:'/kənˈsiːkwənʃəlɪzəm/',k:'결과론',o:['의무론','결과론','덕 윤리학','직관주의']},
+  {w:'virtue ethics',p:'/ˈvɜːrtʃuː ˈɛθɪks/',k:'덕 윤리학',o:['의무론','결과론','덕 윤리학','공리주의']},
+  {w:'contractarianism',p:'/kənˌtræktˈɛəriənɪzəm/',k:'계약론',o:['공리주의','계약론','덕 윤리학','실존주의']},
+  {w:'intersubjectivity',p:'/ˌɪntərsʌbˌdʒɛktɪˈvɪti/',k:'상호주관성',o:['주관성','상호주관성','객관성','초월성']},
+  {w:'supervenience',p:'/ˌsuːpəˈviːniəns/',k:'수반',o:['독립성','수반','환원','통합']},
+  {w:'counterfactual',p:'/ˌkaʊntərˈfæktʃuəl/',k:'반사실적인',o:['사실적인','반사실적인','가설적인','귀납적인']},
+  {w:'incommensurability',p:'/ˌɪnkəˌmɛnʃərəˈbɪlɪti/',k:'공약불가능성',o:['비교가능성','공약불가능성','동등성','상대성']},
+  {w:'underdetermination',p:'/ˌʌndədɪˌtɜːrmɪˈneɪʃən/',k:'과소결정',o:['과잉결정','과소결정','완전결정','우연결정']},
+  {w:'verificationism',p:'/ˌvɛrɪfɪˈkeɪʃənɪzəm/',k:'검증주의',o:['반증주의','검증주의','실용주의','직관주의']},
+  {w:'falsificationism',p:'/ˌfɔːlsɪfɪˈkeɪʃənɪzəm/',k:'반증주의',o:['검증주의','반증주의','귀납주의','연역주의']},
+  {w:'holism',p:'/ˈhoʊlɪzəm/',k:'전체론',o:['환원주의','전체론','개체론','분석론']},
+  {w:'particularism',p:'/pɑːˈtɪkjʊlərɪzəm/',k:'특수주의',o:['보편주의','특수주의','상대주의','절대주의']},
+  {w:'universalism',p:'/ˌjuːnɪˈvɜːrsəlɪzəm/',k:'보편주의',o:['특수주의','보편주의','상대주의','개인주의']},
 ],
 expert:[
   {w:'solipsism',p:'/ˈsɒlɪpsɪzəm/',k:'유아론',o:['유아론','이원론','허무주의','결정론']},
@@ -611,6 +799,54 @@ expert:[
   {w:'opprobrium',p:'/əˈproʊbriəm/',k:'비난',o:['칭찬','비난','무관심','지지']},
   {w:'recalcitrant',p:'/rɪˈkælsɪtrənt/',k:'반항적인',o:['순종적인','반항적인','무관심한','중립적인']},
   {w:'shibboleth',p:'/ˈʃɪbəlɛθ/',k:'집단 식별어',o:['개인 비밀','집단 식별어','암호','서명']},
+  {w:'inchoate',p:'/ɪnˈkoʊɪt/',k:'미완성의',o:['완성된','미완성의','완벽한','정교한']},
+  {w:'syllepsis',p:'/sɪˈlɛpsɪs/',k:'겸용법',o:['생략법','겸용법','도치법','반복법']},
+  {w:'ostensive',p:'/ɒˈstɛnsɪv/',k:'지시적인',o:['추상적인','지시적인','함축적인','서술적인']},
+  {w:'kenosis',p:'/kɪˈnoʊsɪs/',k:'자기 비움',o:['자기 충만','자기 비움','자기 확장','자기 긍정']},
+  {w:'apophatic',p:'/ˌæpəˈfætɪk/',k:'부정신학적인',o:['긍정적인','부정신학적인','실증적인','귀납적인']},
+  {w:'syncretism',p:'/ˈsɪŋkrɪtɪzəm/',k:'혼합주의',o:['순수주의','혼합주의','분리주의','절충주의']},
+  {w:'parousia',p:'/pəˈruːziə/',k:'재림',o:['탄생','재림','승천','심판']},
+  {w:'apophenia',p:'/ˌæpəˈfiːniə/',k:'패턴착각',o:['패턴인식','패턴착각','창의성','직관']},
+  {w:'simulacrum',p:'/ˌsɪmjʊˈleɪkrəm/',k:'모사',o:['원본','모사','복제','패러디']},
+  {w:'bricolage',p:'/ˌbrɪkəˈlɑːʒ/',k:'브리콜라주',o:['체계적 구성','브리콜라주','해체','재구성']},
+  {w:'apotropaic',p:'/ˌæpətrəˈpeɪɪk/',k:'악을 쫓는',o:['악을 부르는','악을 쫓는','중립적인','신성한']},
+  {w:'eschatology',p:'/ˌɛskəˈtɒlədʒi/',k:'종말론',o:['창조론','종말론','구원론','섭리론']},
+  {w:'haecceity',p:'/hɛkˈsiːɪti/',k:'이것임',o:['보편성','이것임','유사성','본질']},
+  {w:'keneme',p:'/ˈkiːniːm/',k:'최소 변별 단위',o:['형태소','최소 변별 단위','음절','단어']},
+  {w:'apperception',p:'/ˌæpərˈsɛpʃən/',k:'통각',o:['감각','통각','지각','직관']},
+  {w:'adumbrate',p:'/ˈædʌmbreɪt/',k:'윤곽을 잡다',o:['완성하다','윤곽을 잡다','분석하다','파괴하다']},
+  {w:'propinquity',p:'/prəˈpɪŋkwɪti/',k:'근접성',o:['거리','근접성','유사성','차이']},
+  {w:'velleity',p:'/vɛˈliːɪti/',k:'약한 의지',o:['강한 의지','약한 의지','충동','결단']},
+  {w:'nescience',p:'/ˈnɛsiəns/',k:'무지',o:['지식','무지','지혜','통찰']},
+  {w:'persiflage',p:'/ˈpɜːrsɪflɑːʒ/',k:'가벼운 조롱',o:['진지한 비판','가벼운 조롱','침묵','칭찬']},
+  {w:'tendentious',p:'/tɛnˈdɛnʃəs/',k:'편향된',o:['공정한','편향된','중립적인','균형잡힌']},
+  {w:'otiose',p:'/ˈoʊʃioʊs/',k:'쓸모없는',o:['유용한','쓸모없는','필수적인','중요한']},
+  {w:'palaver',p:'/pəˈlɑːvər/',k:'쓸데없는 수다',o:['진지한 대화','쓸데없는 수다','중요한 발표','명강의']},
+  {w:'liminal',p:'/ˈlɪmɪnəl/',k:'경계의',o:['중심의','경계의','핵심의','주변의']},
+  {w:'fugacious',p:'/fjuːˈɡeɪʃəs/',k:'일시적인',o:['영속적인','일시적인','주기적인','불규칙적인']},
+  {w:'insouciant',p:'/ɪnˈsuːsiənt/',k:'무관심한',o:['열정적인','무관심한','냉소적인','비판적인']},
+  {w:'minatory',p:'/ˈmɪnətɔːri/',k:'위협적인',o:['우호적인','위협적인','중립적인','격려하는']},
+  {w:'nugatory',p:'/ˈnjuːɡətɔːri/',k:'무가치한',o:['귀중한','무가치한','흥미로운','필수적인']},
+  {w:'fulminate',p:'/ˈfʌlmɪneɪt/',k:'격렬히 비난하다',o:['칭찬하다','격렬히 비난하다','무시하다','침묵하다']},
+  {w:'imprecate',p:'/ˈɪmprɪkeɪt/',k:'저주하다',o:['축복하다','저주하다','기도하다','감사하다']},
+  {w:'supererogatory',p:'/ˌsuːpərɪˈrɒɡətɔːri/',k:'의무 이상의',o:['의무 미달의','의무 이상의','의무적인','선택적인']},
+  {w:'antinomy',p:'/ænˈtɪnəmi/',k:'이율배반',o:['조화','이율배반','모순','역설']},
+  {w:'peripatetic',p:'/ˌpɛrɪpəˈtɛtɪk/',k:'이리저리 돌아다니는',o:['정착하는','이리저리 돌아다니는','규칙적인','안정적인']},
+  {w:'apriorism',p:'/eɪˈpraɪərɪzəm/',k:'선험론',o:['경험론','선험론','실증주의','회의론']},
+  {w:'anamnesis',p:'/ˌænæmˈniːsɪs/',k:'기억',o:['망각','기억','상상','예측']},
+  {w:'quidditative',p:'/kwɪˈdɪtətɪv/',k:'본질적인',o:['외형적인','본질적인','우연적인','표면적인']},
+  {w:'hendiadys',p:'/hɛnˈdaɪədɪs/',k:'이언병용',o:['생략법','이언병용','반복법','대구법']},
+  {w:'zetetic',p:'/zɪˈtɛtɪk/',k:'탐구적인',o:['독단적인','탐구적인','수동적인','무관심한']},
+  {w:'apodeictic',p:'/ˌæpəˈdaɪktɪk/',k:'필연적으로 참인',o:['우연적인','필연적으로 참인','개연적인','모호한']},
+  {w:'enthymeme',p:'/ˈɛnθɪmiːm/',k:'생략삼단논법',o:['완전삼단논법','생략삼단논법','귀납법','유추법']},
+  {w:'paralepsis',p:'/ˌpærəˈlɛpsɪs/',k:'역설적 강조법',o:['직접 강조법','역설적 강조법','생략법','반복법']},
+  {w:'zeugma',p:'/ˈzjuːɡmə/',k:'접합어법',o:['분리어법','접합어법','병렬어법','대조어법']},
+  {w:'anacoluthon',p:'/ˌænəkəˈluːθɒn/',k:'문법불일치',o:['문법일치','문법불일치','문장완성','병렬구조']},
+  {w:'enchiridion',p:'/ˌɛŋkɪˈrɪdiən/',k:'안내서',o:['백과사전','안내서','논문','선언문']},
+  {w:'chrestomathy',p:'/krɛˈstɒməθi/',k:'선집',o:['전집','선집','초록','서평']},
+  {w:'hermeneutical',p:'/ˌhɜːrmɪˈnjuːtɪkəl/',k:'해석학적',o:['분석적','해석학적','실증적','연역적']},
+  {w:'palimpsestic',p:'/ˌpælɪmpˈsɛstɪk/',k:'중복 기록의',o:['단일 기록의','중복 기록의','삭제된','복원된']},
+  {w:'hypotyposis',p:'/ˌhaɪpətaɪˈpoʊsɪs/',k:'생생한 묘사',o:['추상적 서술','생생한 묘사','간략한 개요','논리적 분석']},
 ]};
 
 // ===== STATE =====
@@ -862,6 +1098,10 @@ async function gameOver(){
 
 function retryGame(){G.usedIdx={};startGame()}
 function changeDifficulty(){G.usedIdx={};show('onboarding')}
+function quitGame(){
+  if(G.stage>1) gameOver();
+  else show('onboarding');
+}
 function closeModal(e){if(e.target===e.currentTarget)e.currentTarget.classList.remove('show')}
 function showWrongModal(){
   const modal=$('wrong-modal');
