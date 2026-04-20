@@ -202,7 +202,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
   <div class="card">
     <p class="card-title">닉네임으로 시작하기</p>
     <label class="lbl">NICKNAME</label>
-    <input class="inp" id="nick-inp" type="text" placeholder="영문/한글 닉네임 입력" maxlength="12"/>
+    <input class="inp" id="nick-inp" type="text" placeholder="영문/한글 닉네임 입력" maxlength="12" oninput="document.getElementById('login-btn').disabled=this.value.trim().length<1" onkeydown="if(event.key==='Enter'&&this.value.trim())doLogin()"/>
     <button class="btn btn-p" id="login-btn" disabled onclick="doLogin()">시작하기 →</button>
     <div class="div-row"><div class="div-line"></div><span class="div-txt">간편 로그인 (준비 중)</span><div class="div-line"></div></div>
     <div class="oauth-row">
@@ -866,10 +866,13 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.re
 function $(id){return document.getElementById(id)}
 
 // ===== LOGIN =====
-$('nick-inp').addEventListener('input',function(){$('login-btn').disabled=this.value.trim().length<1});
-$('nick-inp').addEventListener('keydown',function(e){if(e.key==='Enter'&&this.value.trim())doLogin()});
 function doLogin(){const n=$('nick-inp').value.trim();if(!n)return;G.nick=n;show('onboarding')}
 function toggleNotice(){const n=$('notice');n.style.display=n.style.display==='none'?'block':'none'}
+
+document.addEventListener('DOMContentLoaded',function(){
+  $('nick-inp').addEventListener('input',function(){$('login-btn').disabled=this.value.trim().length<1});
+  $('nick-inp').addEventListener('keydown',function(e){if(e.key==='Enter'&&this.value.trim())doLogin()});
+});
 
 // ===== ONBOARDING =====
 function selectLevel(el){
