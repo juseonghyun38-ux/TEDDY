@@ -741,34 +741,79 @@ function showUp(badge,title,sub){
 }
 function closeUp(){$('up-ov').classList.remove('show');nextWord()}
 
-// ===== RANKING =====
-function saveScore(){
-  let ranks=JSON.parse(localStorage.getItem('reflit_ranks')||'[]');
-  ranks.push({name:G.nick,stage:G.stage,level:LN[G.curLv],correct:G.correct,wrong:G.wrong,date:new Date().toLocaleDateString('ko-KR')});
-  ranks.sort((a,b)=>b.stage-a.stage);
-  ranks=ranks.slice(0,20);
-  localStorage.setItem('reflit_ranks',JSON.stringify(ranks));
-  return ranks;
+// ===== SUPABASE =====
+const SB_URL = 'https://hcqfdmwmmkxvqfqglagl.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjcWZkbXdtbWt4dnFmcWdsYWdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NjQxNzMsImV4cCI6MjA5MjI0MDE3M30.sbRRlMSvC7QlAsLefRsZ7Zskz9-ioSqKWPnGtdioSyM';
+
+async function sbFetch(path, opts={}){
+  const res = await fetch(SB_URL+'/rest/v1/'+path, {
+    headers:{
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer '+SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer||'',
+      ...opts.headers
+    },
+    ...opts
+  });
+  if(!res.ok) throw new Error(await res.text());
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
-function showRanking(){
-  const ranks=saveScore();
-  renderRanking(ranks);
+async function saveScore(){
+  // 로컬 백업
+  let local=JSON.parse(localStorage.getItem('reflit_ranks')||'[]');
+  const entry={nickname:G.nick,stage:G.stage,level:LN[G.curLv],correct:G.correct,wrong:G.wrong,created_at:new Date().toISOString()};
+  local.push(entry);
+  local.sort((a,b)=>b.stage-a.stage);
+  localStorage.setItem('reflit_ranks',JSON.stringify(local.slice(0,20)));
+  // Supabase 저장
+  try {
+    await sbFetch('rankings',{
+      method:'POST',
+      prefer:'return=minimal',
+      body: JSON.stringify({
+        nickname: G.nick,
+        stage: G.stage,
+        level: LN[G.curLv],
+        correct: G.correct,
+        wrong: G.wrong
+      })
+    });
+  } catch(e){ console.warn('랭킹 저장 실패:', e); }
+}
+
+async function showRanking(){
   show('ranking');
+  const list=$('rank-list');
+  list.innerHTML='<div class="rank-empty"><div class="ld-dots"><span></span><span></span><span></span></div><div style="margin-top:10px">랭킹 불러오는 중...</div></div>';
+  try {
+    const data = await sbFetch('rankings?select=*&order=stage.desc&limit=20');
+    renderRanking(data||[]);
+  } catch(e){
+    // 실패 시 로컬 랭킹으로 대체
+    const local=JSON.parse(localStorage.getItem('reflit_ranks')||'[]');
+    renderRanking(local.map(r=>({...r, nickname:r.nickname||r.name})));
+  }
 }
 
 function renderRanking(ranks){
   const list=$('rank-list');
-  if(ranks.length===0){list.innerHTML='<div class="rank-empty">아직 기록이 없어요!<br>첫 번째 도전자가 되어보세요 🚀</div>';return}
+  if(!ranks.length){
+    list.innerHTML='<div class="rank-empty">아직 기록이 없어요!<br>첫 번째 도전자가 되어보세요 🚀</div>';
+    return;
+  }
   const medals=['🥇','🥈','🥉'];
   list.innerHTML=ranks.map((r,i)=>{
-    const isMe=r.name===G.nick&&r.stage===G.stage;
+    const isMe=(r.nickname||r.name)===G.nick && r.stage===G.stage;
+    const date=r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '';
     return`<div class="rank-item${isMe?' me':''}">
       <div class="rank-pos">${i+1}</div>
       <div class="rank-medal">${medals[i]||''}</div>
       <div class="rank-info">
-        <div class="rank-name">${r.name}</div>
-        <div class="rank-detail">${r.level} · 정답 ${r.correct} · ${r.date}</div>
+        <div class="rank-name">${r.nickname||r.name}</div>
+        <div class="rank-detail">${r.level} · 정답 ${r.correct} · ${date}</div>
       </div>
       <div class="rank-score">${r.stage}</div>
     </div>`;
@@ -779,8 +824,8 @@ function closeRanking(){show('gameover')}
 function retryFromRanking(){G.usedIdx={};startGame()}
 
 // ===== GAME OVER =====
-function gameOver(){
-  saveScore();
+async function gameOver(){
+  await saveScore();
   $('go-stg').textContent=G.stage;
   $('go-best').textContent=G.best;
   $('go-ok').textContent=G.correct;
