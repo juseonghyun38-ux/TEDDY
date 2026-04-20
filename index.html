@@ -47,6 +47,23 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
 .oauth-btn:hover{border-color:var(--line2);color:var(--text);background:var(--bg4)}
 .notice{font-size:11px;color:var(--text3);text-align:center;margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:var(--rad);line-height:1.6;display:none}
 
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:flex-end;justify-content:center;padding:1rem}
+.modal-overlay.show{display:flex;animation:fi2 .2s ease}
+@keyframes fi2{from{opacity:0}to{opacity:1}}
+.modal-box{background:var(--bg2);border:1px solid var(--line2);border-radius:var(--radlg) var(--radlg) var(--radlg) var(--radlg);width:100%;max-width:460px;max-height:70vh;display:flex;flex-direction:column;animation:slideup .25s cubic-bezier(.2,1,.4,1)}
+@keyframes slideup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--line)}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text)}
+.modal-close{background:var(--bg3);border:none;color:var(--text2);cursor:pointer;width:28px;height:28px;border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:var(--bg4);color:var(--text)}
+.modal-body{padding:1rem 1.25rem;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad);padding:.9rem 1rem;display:flex;align-items:center;gap:12px}
+.wi-word{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--r);min-width:120px;letter-spacing:1px}
+.wi-ph{font-size:11px;color:var(--text3);margin-top:2px;font-family:'Space Grotesk',sans-serif}
+.wi-meaning{font-size:14px;color:var(--text);font-weight:500}
+.modal-empty{text-align:center;padding:2rem;color:var(--text3);font-size:14px}
+
 /* ONBOARDING */
 .ob-screen{padding:2rem 1.5rem;min-height:640px}
 .ob-step{font-size:10px;color:var(--p2);letter-spacing:3px;margin-bottom:6px;font-family:'Space Grotesk',sans-serif}
@@ -303,7 +320,19 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
   <div class="go-acts">
     <button class="btn btn-p" onclick="retryGame()">다시 도전 →</button>
     <button class="btn btn-gold" onclick="showRanking()">🏆 랭킹 보기</button>
-    <button class="btn btn-o" onclick="showWrong()">틀린 단어 복습</button>
+    <button class="btn btn-o" onclick="changeDifficulty()">⚙️ 난이도 변경</button>
+    <button class="btn btn-o" onclick="showWrongModal()">틀린 단어 복습</button>
+  </div>
+</div>
+
+<!-- WRONG WORDS MODAL -->
+<div class="modal-overlay" id="wrong-modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-title">📝 틀린 단어</div>
+      <button class="modal-close" onclick="$('wrong-modal').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body" id="wrong-list"></div>
   </div>
 </div>
 
@@ -765,9 +794,24 @@ function gameOver(){
 }
 
 function retryGame(){G.usedIdx={};startGame()}
-function showWrong(){
-  if(!G.wrongWords.length){alert('틀린 단어가 없어요! 완벽해요 🎉');return}
-  alert('📝 틀린 단어 목록\n\n'+G.wrongWords.map(w=>`• ${w.w} (${w.p}) = ${w.k}`).join('\n'));
+function changeDifficulty(){G.usedIdx={};show('onboarding')}
+function closeModal(e){if(e.target===e.currentTarget)e.currentTarget.classList.remove('show')}
+function showWrongModal(){
+  const modal=$('wrong-modal');
+  const list=$('wrong-list');
+  if(!G.wrongWords.length){
+    list.innerHTML='<div class="modal-empty">틀린 단어가 없어요!<br>완벽해요 🎉</div>';
+  } else {
+    list.innerHTML=G.wrongWords.map(w=>`
+      <div class="wrong-item">
+        <div>
+          <div class="wi-word">${w.w}</div>
+          <div class="wi-ph">${w.p}</div>
+        </div>
+        <div class="wi-meaning">= ${w.k}</div>
+      </div>`).join('');
+  }
+  modal.classList.add('show');
 }
 </script>
 </body>
