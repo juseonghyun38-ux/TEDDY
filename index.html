@@ -58,11 +58,16 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
 .modal-close{background:var(--bg3);border:none;color:var(--text2);cursor:pointer;width:28px;height:28px;border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .modal-close:hover{background:var(--bg4);color:var(--text)}
 .modal-body{padding:1rem 1.25rem;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.wrong-item{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad);padding:.9rem 1rem;display:flex;align-items:center;gap:12px}
-.wi-word{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--r);min-width:120px;letter-spacing:1px}
-.wi-ph{font-size:11px;color:var(--text3);margin-top:2px;font-family:'Space Grotesk',sans-serif}
-.wi-meaning{font-size:14px;color:var(--text);font-weight:500}
+.wrong-item{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.wi-word{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+.wi-meaning{font-size:13px;color:var(--text2);background:var(--bg4);padding:4px 12px;border-radius:999px}
 .modal-empty{text-align:center;padding:2rem;color:var(--text3);font-size:14px}
+
+/* RANK TABS */
+.rank-tabs{display:flex;gap:6px;margin-bottom:1rem;overflow-x:auto;padding-bottom:2px}
+.rank-tab{padding:6px 14px;border-radius:999px;font-size:12px;font-family:'Space Grotesk',sans-serif;font-weight:600;cursor:pointer;border:1px solid var(--line2);background:var(--bg3);color:var(--text2);white-space:nowrap;transition:all .15s;flex-shrink:0}
+.rank-tab:hover{border-color:var(--p);color:var(--p2)}
+.rank-tab.active{background:var(--pbg);border-color:var(--p);color:var(--p2)}
 
 /* ONBOARDING */
 .ob-screen{padding:2rem 1.5rem;min-height:640px}
@@ -299,6 +304,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
   <div class="rank-hdr">
     <div class="rank-title">🏆 RANKING</div>
     <button class="rank-close" onclick="closeRanking()">← 돌아가기</button>
+  </div>
+  <div class="rank-tabs" id="rank-tabs">
+    <div class="rank-tab active" data-level="전체" onclick="switchRankTab(this)">전체</div>
+    <div class="rank-tab" data-level="유치원" onclick="switchRankTab(this)">🌱 유치원</div>
+    <div class="rank-tab" data-level="초등" onclick="switchRankTab(this)">📚 초등</div>
+    <div class="rank-tab" data-level="고등" onclick="switchRankTab(this)">🎓 고등</div>
+    <div class="rank-tab" data-level="대학교" onclick="switchRankTab(this)">🏛️ 대학교</div>
+    <div class="rank-tab" data-level="전문가" onclick="switchRankTab(this)">⚡ 전문가</div>
   </div>
   <div class="rank-list" id="rank-list"></div>
   <button class="btn btn-p" onclick="retryFromRanking()">다시 도전 →</button>
@@ -784,28 +797,40 @@ async function saveScore(){
   } catch(e){ console.warn('랭킹 저장 실패:', e); }
 }
 
+let rankData = []; // 전체 랭킹 캐시
+
 async function showRanking(){
   show('ranking');
+  // 탭 초기화
+  document.querySelectorAll('.rank-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.rank-tab[data-level="전체"]').classList.add('active');
   const list=$('rank-list');
   list.innerHTML='<div class="rank-empty"><div class="ld-dots"><span></span><span></span><span></span></div><div style="margin-top:10px">랭킹 불러오는 중...</div></div>';
   try {
-    const data = await sbFetch('rankings?select=*&order=stage.desc&limit=20');
-    renderRanking(data||[]);
+    rankData = await sbFetch('rankings?select=*&order=stage.desc&limit=100') || [];
+    renderRanking(rankData, '전체');
   } catch(e){
-    // 실패 시 로컬 랭킹으로 대체
-    const local=JSON.parse(localStorage.getItem('reflit_ranks')||'[]');
-    renderRanking(local.map(r=>({...r, nickname:r.nickname||r.name})));
+    rankData = JSON.parse(localStorage.getItem('reflit_ranks')||'[]').map(r=>({...r,nickname:r.nickname||r.name}));
+    renderRanking(rankData, '전체');
   }
 }
 
-function renderRanking(ranks){
+function switchRankTab(el){
+  document.querySelectorAll('.rank-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const level = el.dataset.level;
+  const filtered = level === '전체' ? rankData : rankData.filter(r=>r.level===level);
+  renderRanking(filtered, level);
+}
+
+function renderRanking(ranks, level='전체'){
   const list=$('rank-list');
   if(!ranks.length){
-    list.innerHTML='<div class="rank-empty">아직 기록이 없어요!<br>첫 번째 도전자가 되어보세요 🚀</div>';
+    list.innerHTML=`<div class="rank-empty">${level==='전체'?'아직 기록이 없어요!':level+' 레벨 기록이 없어요!'}<br>첫 번째 도전자가 되어보세요 🚀</div>`;
     return;
   }
   const medals=['🥇','🥈','🥉'];
-  list.innerHTML=ranks.map((r,i)=>{
+  list.innerHTML=ranks.slice(0,20).map((r,i)=>{
     const isMe=(r.nickname||r.name)===G.nick && r.stage===G.stage;
     const date=r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '';
     return`<div class="rank-item${isMe?' me':''}">
@@ -846,10 +871,7 @@ function showWrongModal(){
   } else {
     list.innerHTML=G.wrongWords.map(w=>`
       <div class="wrong-item">
-        <div>
-          <div class="wi-word">${w.w}</div>
-          <div class="wi-ph">${w.p}</div>
-        </div>
+        <div class="wi-word">${w.w}</div>
         <div class="wi-meaning">= ${w.k}</div>
       </div>`).join('');
   }
