@@ -1,533 +1,773 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>REFLIT — 영어 단어 게임</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0e0e10; --bg2: #16161a; --bg3: #1e1e24; --bg4: #26262e;
-      --line: rgba(255,255,255,0.08); --line2: rgba(255,255,255,0.15);
-      --text: #f0eff8; --text2: #9896b0; --text3: #5a5870;
-      --accent: #7c6fea; --accent2: #a99ef5; --accent-bg: rgba(124,111,234,0.15); --accent-bg2: rgba(124,111,234,0.28);
-      --green: #3ecf8e; --green-bg: rgba(62,207,142,0.12);
-      --red: #f06060; --red-bg: rgba(240,96,96,0.12);
-      --gold: #f5c542; --radius: 12px; --radius-lg: 18px;
-    }
-    body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; color: var(--text); }
-    .app { width: 100%; max-width: 460px; position: relative; min-height: 620px; display: flex; flex-direction: column; }
-    .screen { display: none; flex-direction: column; flex: 1; }
-    .screen.active { display: flex; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>REFLIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0c;--bg2:#111114;--bg3:#18181d;--bg4:#202027;--bg5:#2a2a34;
+  --line:rgba(255,255,255,0.07);--line2:rgba(255,255,255,0.13);--line3:rgba(255,255,255,0.22);
+  --text:#eeedf8;--text2:#8e8ca8;--text3:#504e68;
+  --p:#6c5ce7;--p2:#a29bfe;--p3:#ddd8ff;--pbg:rgba(108,92,231,0.14);--pbg2:rgba(108,92,231,0.26);
+  --g:#00b894;--gbg:rgba(0,184,148,0.12);
+  --r:#e17055;--rbg:rgba(225,112,85,0.12);
+  --gold:#fdcb6e;--gold2:#e17055;
+  --rad:10px;--radlg:16px;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;color:var(--text)}
+.app{width:100%;max-width:460px;position:relative;min-height:640px;display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;flex:1}
+.screen.active{display:flex}
 
-    /* SHARED */
-    .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Syne', sans-serif; letter-spacing: 0.5px; }
-    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: 0.35; pointer-events: none; transform: none; }
-    .btn-ghost { width: 100%; padding: 13px; background: transparent; color: var(--text2); border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
-    .btn-ghost:hover { background: var(--bg3); color: var(--text); border-color: var(--accent); }
+/* SHARED */
+.btn{width:100%;padding:13px;border:none;border-radius:var(--rad);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Space Grotesk',sans-serif;letter-spacing:.3px}
+.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--p2);transform:translateY(-1px)}.btn-p:disabled{opacity:.35;pointer-events:none;transform:none}
+.btn-o{background:transparent;color:var(--text2);border:1px solid var(--line2)}.btn-o:hover{background:var(--bg3);color:var(--text);border-color:var(--p)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0a00}.btn-gold:hover{opacity:.9;transform:translateY(-1px)}
 
-    /* LOGIN */
-    .login-screen { align-items: center; justify-content: center; padding: 3rem 1.5rem; min-height: 620px; }
-    .logo-wrap { text-align: center; margin-bottom: 3rem; }
-    .logo { font-family: 'Syne', sans-serif; font-size: 44px; font-weight: 800; letter-spacing: 6px; background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .logo-dot { -webkit-text-fill-color: var(--accent); }
-    .logo-tagline { font-size: 11px; color: var(--text3); margin-top: 8px; letter-spacing: 2px; font-family: 'Syne', sans-serif; }
-    .login-box { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 360px; }
-    .login-box-title { font-size: 14px; color: var(--text2); text-align: center; margin-bottom: 1.5rem; }
-    .input-label { font-size: 11px; color: var(--text3); display: block; margin-bottom: 6px; letter-spacing: 0.5px; }
-    .text-input { width: 100%; padding: 12px 14px; background: var(--bg3); border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); font-size: 15px; font-family: inherit; transition: border-color 0.15s; outline: none; margin-bottom: 1rem; }
-    .text-input:focus { border-color: var(--accent); }
-    .text-input::placeholder { color: var(--text3); }
-    .divider { display: flex; align-items: center; gap: 12px; margin: 1.25rem 0; }
-    .divider-line { flex: 1; height: 1px; background: var(--line); }
-    .divider-text { font-size: 11px; color: var(--text3); letter-spacing: 0.5px; }
-    .oauth-row { display: flex; gap: 10px; }
-    .oauth-btn { flex: 1; padding: 11px 8px; background: var(--bg3); border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--text2); transition: all 0.15s; font-family: inherit; }
-    .oauth-btn:hover { border-color: var(--line2); color: var(--text); background: var(--bg4); }
-    .oauth-notice { font-size: 11px; color: var(--text3); text-align: center; margin-top: 10px; line-height: 1.6; padding: 10px; background: var(--bg3); border-radius: var(--radius); }
+/* LOGIN */
+.login-screen{align-items:center;justify-content:center;padding:2.5rem 1.5rem;min-height:640px}
+.logo-block{text-align:center;margin-bottom:2.5rem}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:8px;background:linear-gradient(135deg,#fff 30%,var(--p2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.logo-sub{font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--text3);letter-spacing:3px;margin-top:4px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radlg);padding:1.75rem;width:100%;max-width:360px}
+.card-title{font-size:13px;color:var(--text2);text-align:center;margin-bottom:1.25rem;font-family:'Space Grotesk',sans-serif}
+.lbl{font-size:11px;color:var(--text3);display:block;margin-bottom:5px;letter-spacing:.5px;font-family:'Space Grotesk',sans-serif}
+.inp{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad);color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border-color .15s;margin-bottom:1rem}
+.inp:focus{border-color:var(--p)}
+.inp::placeholder{color:var(--text3)}
+.div-row{display:flex;align-items:center;gap:10px;margin:1rem 0}
+.div-line{flex:1;height:1px;background:var(--line)}
+.div-txt{font-size:11px;color:var(--text3);letter-spacing:.5px;white-space:nowrap}
+.oauth-row{display:flex;gap:8px}
+.oauth-btn{flex:1;padding:10px 6px;background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:var(--text2);transition:all .15s;font-family:inherit}
+.oauth-btn:hover{border-color:var(--line2);color:var(--text);background:var(--bg4)}
+.notice{font-size:11px;color:var(--text3);text-align:center;margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:var(--rad);line-height:1.6;display:none}
 
-    /* ONBOARDING */
-    .onboarding-screen { padding: 2.5rem 1.5rem; min-height: 620px; }
-    .ob-step { font-size: 11px; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; font-family: 'Syne', sans-serif; }
-    .ob-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; font-family: 'Syne', sans-serif; }
-    .ob-sub { font-size: 13px; color: var(--text2); margin-bottom: 2rem; line-height: 1.6; }
-    .level-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem; }
-    .level-item { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.25rem; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 14px; }
-    .level-item:hover { border-color: var(--accent); background: var(--bg3); }
-    .level-item.selected { border-color: var(--accent); background: var(--accent-bg); }
-    .level-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-    .level-item.selected .level-icon { background: var(--accent-bg2); }
-    .level-text { flex: 1; }
-    .level-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; font-family: 'Syne', sans-serif; }
-    .level-desc { font-size: 12px; color: var(--text2); }
-    .level-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
-    .level-item.selected .level-check { background: var(--accent); border-color: var(--accent); }
-    .level-item.selected .level-check::after { content: '✓'; font-size: 11px; color: #fff; font-weight: 700; }
+/* ONBOARDING */
+.ob-screen{padding:2rem 1.5rem;min-height:640px}
+.ob-step{font-size:10px;color:var(--p2);letter-spacing:3px;margin-bottom:6px;font-family:'Space Grotesk',sans-serif}
+.ob-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:var(--text);margin-bottom:6px}
+.ob-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
+.level-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+.lv-item{background:var(--bg2);border:1.5px solid var(--line);border-radius:var(--rad);padding:.9rem 1rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.lv-item:hover{border-color:var(--p);background:var(--bg3)}
+.lv-item.sel{border-color:var(--p);background:var(--pbg)}
+.lv-icon{width:38px;height:38px;border-radius:9px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.lv-item.sel .lv-icon{background:var(--pbg2)}
+.lv-text{flex:1}
+.lv-name{font-size:14px;font-weight:600;color:var(--text);font-family:'Space Grotesk',sans-serif}
+.lv-desc{font-size:11px;color:var(--text2);margin-top:2px}
+.lv-chk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.lv-item.sel .lv-chk{background:var(--p);border-color:var(--p)}
+.lv-item.sel .lv-chk::after{content:'✓';font-size:10px;color:#fff;font-weight:700}
 
-    /* GAME */
-    .game-screen { min-height: 620px; }
-    .game-header { background: var(--bg2); border-bottom: 1px solid var(--line); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
-    .lives { display: flex; gap: 5px; }
-    .heart { font-size: 18px; transition: all 0.2s; }
-    .heart.lost { opacity: 0.18; transform: scale(0.85); }
-    .stage-center { text-align: center; }
-    .stage-label { font-size: 10px; color: var(--text3); letter-spacing: 2px; font-family: 'Syne', sans-serif; }
-    .stage-number { font-size: 24px; font-weight: 800; color: var(--text); font-family: 'Syne', sans-serif; line-height: 1; }
-    .level-pill { display: inline-block; background: var(--accent-bg); color: var(--accent2); font-size: 10px; padding: 2px 10px; border-radius: 999px; margin-top: 3px; font-family: 'Syne', sans-serif; }
-    .best-right { text-align: right; }
-    .best-label { font-size: 10px; color: var(--text3); letter-spacing: 1px; font-family: 'Syne', sans-serif; }
-    .best-number { font-size: 18px; font-weight: 700; color: var(--gold); font-family: 'Syne', sans-serif; }
-    .game-body { padding: 1.5rem; display: flex; flex-direction: column; align-items: center; flex: 1; }
-    .progress-wrap { width: 100%; height: 3px; background: var(--bg4); border-radius: 99px; margin-bottom: 1.5rem; }
-    .progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
-    .word-card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 2.5rem 2rem; text-align: center; width: 100%; margin-bottom: 1.5rem; min-height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-    .word-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 150px; height: 150px; border-radius: 50%; background: var(--accent-bg); pointer-events: none; }
-    .word-en { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--text); margin-bottom: 6px; letter-spacing: -1px; }
-    .word-phonetic { font-size: 14px; color: var(--text3); }
-    .loading-dots span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin: 0 2px; animation: dp 1.2s ease-in-out infinite; }
-    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dp { 0%,80%,100%{opacity:.2;transform:scale(.8)} 40%{opacity:1;transform:scale(1)} }
-    .loading-text { font-size: 12px; color: var(--text3); margin-top: 10px; }
-    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-    .option-btn { background: var(--bg2); border: 1px solid var(--line2); border-radius: var(--radius); padding: 14px 12px; cursor: pointer; font-size: 14px; color: var(--text); text-align: left; transition: all 0.12s; display: flex; align-items: flex-start; gap: 10px; font-family: inherit; }
-    .option-btn:hover:not(.disabled) { border-color: var(--accent); background: var(--accent-bg); }
-    .option-btn.correct { border-color: var(--green); background: var(--green-bg); color: var(--green); }
-    .option-btn.wrong { border-color: var(--red); background: var(--red-bg); color: var(--red); }
-    .option-btn.disabled { pointer-events: none; }
-    .opt-num { min-width: 22px; height: 22px; border-radius: 6px; background: var(--bg4); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text3); font-weight: 600; flex-shrink: 0; margin-top: 1px; font-family: 'Syne', sans-serif; }
-    .option-btn.correct .opt-num { background: var(--green); color: #fff; }
-    .option-btn.wrong .opt-num { background: var(--red); color: #fff; }
-    .feedback-wrap { width: 100%; margin-top: 1rem; min-height: 52px; }
-    .feedback-bar { padding: 12px 16px; border-radius: var(--radius); font-size: 14px; display: none; }
-    .feedback-bar.show { display: block; animation: fi .2s ease; }
-    @keyframes fi { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
-    .feedback-bar.correct-fb { background: var(--green-bg); border: 1px solid rgba(62,207,142,0.2); color: var(--green); }
-    .feedback-bar.wrong-fb { background: var(--red-bg); border: 1px solid rgba(240,96,96,0.2); color: var(--red); }
-    .fb-title { font-weight: 600; margin-bottom: 2px; }
-    .fb-hint { font-size: 12px; opacity: 0.75; }
+/* LIVES SETTING */
+.lives-setting{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad);padding:1rem;margin-bottom:1.5rem}
+.ls-title{font-size:12px;color:var(--text2);margin-bottom:10px;font-family:'Space Grotesk',sans-serif}
+.ls-row{display:flex;gap:8px}
+.ls-opt{flex:1;padding:8px 4px;background:var(--bg3);border:1.5px solid var(--line);border-radius:var(--rad);cursor:pointer;text-align:center;transition:all .15s}
+.ls-opt:hover{border-color:var(--p)}
+.ls-opt.sel{border-color:var(--p);background:var(--pbg)}
+.ls-opt .ls-hearts{font-size:13px;display:block;margin-bottom:2px}
+.ls-opt .ls-label{font-size:10px;color:var(--text2);font-family:'Space Grotesk',sans-serif}
+.ls-opt.sel .ls-label{color:var(--p2)}
 
-    /* UPGRADE */
-    .upgrade-overlay { position: absolute; inset: 0; background: rgba(14,14,16,0.97); border-radius: var(--radius-lg); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 20; padding: 2rem; text-align: center; }
-    .upgrade-overlay.show { display: flex; animation: fi .3s ease; }
-    .upgrade-badge { font-size: 56px; margin-bottom: 1rem; animation: bi .5s cubic-bezier(.2,1.5,.5,1); }
-    @keyframes bi { from{transform:scale(.3);opacity:0} to{transform:scale(1);opacity:1} }
-    .upgrade-stars { font-size: 20px; margin-bottom: 1rem; letter-spacing: 4px; color: var(--gold); }
-    .upgrade-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-    .upgrade-sub { font-size: 14px; color: var(--text2); margin-bottom: 2rem; line-height: 1.7; white-space: pre-line; }
+/* GAME */
+.game-screen{min-height:640px}
+.game-hdr{background:var(--bg2);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.lives-row{display:flex;gap:4px}
+.hrt{font-size:17px;transition:all .2s}
+.hrt.lost{opacity:.15;transform:scale(.82)}
+.stage-mid{text-align:center}
+.stg-lbl{font-size:9px;color:var(--text3);letter-spacing:2.5px;font-family:'Space Grotesk',sans-serif}
+.stg-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text);line-height:1}
+.lv-pill{display:inline-block;background:var(--pbg);color:var(--p2);font-size:10px;padding:1px 9px;border-radius:999px;margin-top:2px;font-family:'Space Grotesk',sans-serif}
+.best-right{text-align:right}
+.best-lbl{font-size:9px;color:var(--text3);letter-spacing:2px;font-family:'Space Grotesk',sans-serif}
+.best-num{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);line-height:1.2}
 
-    /* GAME OVER */
-    .gameover-screen { align-items: center; justify-content: center; padding: 3rem 1.5rem; min-height: 620px; text-align: center; }
-    .go-emoji { font-size: 52px; margin-bottom: 1.5rem; }
-    .go-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
-    .go-sub { font-size: 14px; color: var(--text2); margin-bottom: 2rem; line-height: 1.6; }
-    .go-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 340px; margin-bottom: 2rem; }
-    .go-stat { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
-    .go-stat-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; letter-spacing: 0.5px; }
-    .go-stat-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--text); }
-    .go-stat-value.gold { color: var(--gold); }
-    .go-stat-value.accent { color: var(--accent2); }
-    .go-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 340px; }
+.game-body{padding:1.25rem;display:flex;flex-direction:column;align-items:center;flex:1}
+.prog-wrap{width:100%;height:2px;background:var(--bg4);border-radius:99px;margin-bottom:1.25rem}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--p2));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
 
-    @media (max-width: 500px) { body { padding: 0; align-items: flex-start; } .app { max-width: 100%; border-radius: 0; min-height: 100vh; } }
-  </style>
+.word-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radlg);padding:2rem 1.5rem;text-align:center;width:100%;margin-bottom:1.25rem;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.word-card::after{content:'';position:absolute;bottom:-40px;left:-40px;width:120px;height:120px;border-radius:50%;background:var(--pbg);pointer-events:none}
+.word-en{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--text);letter-spacing:3px;line-height:1;text-shadow:0 0 40px rgba(108,92,231,0.3)}
+.word-ph{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text3);margin-top:4px}
+.ld-dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--p);margin:0 2px;animation:dp 1.2s ease-in-out infinite}
+.ld-dots span:nth-child(2){animation-delay:.2s}
+.ld-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.ld-txt{font-size:12px;color:var(--text3);margin-top:8px}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.opt{background:var(--bg2);border:1px solid var(--line2);border-radius:var(--rad);padding:13px 11px;cursor:pointer;font-size:14px;color:var(--text);text-align:left;transition:all .12s;display:flex;align-items:flex-start;gap:9px;font-family:inherit}
+.opt:hover:not(.dis){border-color:var(--p);background:var(--pbg)}
+.opt.ok{border-color:var(--g);background:var(--gbg);color:var(--g)}
+.opt.no{border-color:var(--r);background:var(--rbg);color:var(--r)}
+.opt.dis{pointer-events:none}
+.onum{min-width:20px;height:20px;border-radius:5px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3);font-weight:700;flex-shrink:0;margin-top:1px;font-family:'Space Grotesk',sans-serif}
+.opt.ok .onum{background:var(--g);color:#fff}
+.opt.no .onum{background:var(--r);color:#fff}
+
+.fb-wrap{width:100%;margin-top:.9rem;min-height:50px}
+.fb{padding:11px 14px;border-radius:var(--rad);font-size:13px;display:none}
+.fb.show{display:block;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.fb.ok-fb{background:var(--gbg);border:1px solid rgba(0,184,148,.2);color:var(--g)}
+.fb.no-fb{background:var(--rbg);border:1px solid rgba(225,112,85,.2);color:var(--r)}
+.fb-t{font-weight:700;margin-bottom:2px}
+.fb-h{font-size:11px;opacity:.75}
+
+/* UPGRADE OVERLAY */
+.up-ov{position:absolute;inset:0;background:rgba(10,10,12,.97);border-radius:var(--radlg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:20;padding:2rem;text-align:center}
+.up-ov.show{display:flex;animation:fi .3s ease}
+.up-badge{font-size:56px;margin-bottom:1rem;animation:bi .5s cubic-bezier(.2,1.5,.5,1)}
+@keyframes bi{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.up-stars{font-size:18px;color:var(--gold);letter-spacing:5px;margin-bottom:1rem}
+.up-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text);margin-bottom:8px}
+.up-sub{font-size:13px;color:var(--text2);margin-bottom:2rem;line-height:1.7;white-space:pre-line}
+
+/* RANKING */
+.rank-screen{padding:2rem 1.5rem;min-height:640px}
+.rank-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.rank-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text)}
+.rank-close{background:var(--bg3);border:1px solid var(--line);border-radius:var(--rad);padding:6px 14px;cursor:pointer;font-size:13px;color:var(--text2);font-family:inherit;transition:all .15s}
+.rank-close:hover{color:var(--text);border-color:var(--line2)}
+.rank-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+.rank-item{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad);padding:.9rem 1rem;display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.rank-item.me{border-color:var(--p);background:var(--pbg)}
+.rank-pos{font-family:'Bebas Neue',sans-serif;font-size:22px;min-width:32px;text-align:center;color:var(--text3)}
+.rank-item:nth-child(1) .rank-pos{color:var(--gold)}
+.rank-item:nth-child(2) .rank-pos{color:#c0c0c0}
+.rank-item:nth-child(3) .rank-pos{color:#cd7f32}
+.rank-medal{font-size:18px;min-width:24px;text-align:center}
+.rank-info{flex:1}
+.rank-name{font-size:14px;font-weight:600;color:var(--text);font-family:'Space Grotesk',sans-serif}
+.rank-detail{font-size:11px;color:var(--text2);margin-top:2px}
+.rank-score{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--p2)}
+.rank-item.me .rank-score{color:var(--gold)}
+.rank-empty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+
+/* GAME OVER */
+.go-screen{align-items:center;justify-content:center;padding:2.5rem 1.5rem;min-height:640px;text-align:center}
+.go-emoji{font-size:52px;margin-bottom:1.25rem}
+.go-title{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:3px;color:var(--text);margin-bottom:4px}
+.go-sub{font-size:13px;color:var(--text2);margin-bottom:1.75rem;line-height:1.6}
+.go-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:340px;margin-bottom:1.75rem}
+.go-stat{background:var(--bg2);border:1px solid var(--line);border-radius:var(--rad);padding:.9rem}
+.go-sl{font-size:10px;color:var(--text3);margin-bottom:5px;letter-spacing:.5px;font-family:'Space Grotesk',sans-serif}
+.go-sv{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--text)}
+.go-sv.gold{color:var(--gold)}
+.go-sv.acc{color:var(--p2)}
+.go-acts{display:flex;flex-direction:column;gap:8px;width:100%;max-width:340px}
+
+@media(max-width:500px){body{padding:0;align-items:flex-start}.app{max-width:100%;border-radius:0;min-height:100vh}}
+</style>
 </head>
 <body>
 <div class="app" id="app">
 
-  <!-- LOGIN -->
-  <div class="screen login-screen active" id="screen-login">
-    <div class="logo-wrap">
-      <div class="logo">REFLIT<span class="logo-dot">.</span></div>
-      <div class="logo-tagline">LEVEL UP YOUR VOCABULARY</div>
-    </div>
-    <div class="login-box">
-      <p class="login-box-title">닉네임으로 시작하기</p>
-      <label class="input-label">닉네임</label>
-      <input class="text-input" id="nickname-input" type="text" placeholder="영문/한글 닉네임 입력" maxlength="12" />
-      <button class="btn-primary" id="login-btn" onclick="doLogin()" disabled>시작하기 →</button>
-      <div class="divider"><div class="divider-line"></div><span class="divider-text">간편 로그인 (준비 중)</span><div class="divider-line"></div></div>
-      <div class="oauth-row">
-        <button class="oauth-btn" onclick="toggleOAuthNotice()">
-          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.418 13.415 17.64 11.107 17.64 9.2z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-          Google
-        </button>
-        <button class="oauth-btn" onclick="toggleOAuthNotice()">
-          <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor"><path d="M12.96 0c.064 1.08-.297 2.136-.965 2.912-.67.78-1.67 1.39-2.71 1.31C9.17 3.17 9.51 2.1 10.2 1.3 10.88.5 12 .02 12.96 0zM16.4 12.07c-.48 1.07-1.06 2.06-1.9 2.85-.69.65-1.42 1.3-2.45 1.32-1 .02-1.32-.6-2.46-.59-1.14.01-1.49.61-2.49.61-1.02.02-1.8-.71-2.52-1.38-1.9-1.78-3.38-5.08-2.83-8.24.35-1.98 1.39-3.79 2.96-4.9.78-.56 1.74-.9 2.73-.87 1.02.03 1.97.65 2.61.65.64 0 1.83-.8 3.07-.68.52.02 1.99.21 2.93 1.6-.08.05-1.74 1.02-1.72 3.04.02 2.42 2.12 3.22 2.07 3.59z"/></svg>
-          Apple
-        </button>
-      </div>
-      <div class="oauth-notice" id="oauth-notice" style="display:none">Google/Apple 로그인은 서버 연동 후 지원 예정이에요.<br>지금은 닉네임으로 시작해주세요!</div>
-    </div>
+<!-- LOGIN -->
+<div class="screen login-screen active" id="screen-login">
+  <div class="logo-block">
+    <div class="logo-text">REFLIT</div>
+    <div class="logo-sub">LEVEL UP YOUR VOCABULARY</div>
   </div>
+  <div class="card">
+    <p class="card-title">닉네임으로 시작하기</p>
+    <label class="lbl">NICKNAME</label>
+    <input class="inp" id="nick-inp" type="text" placeholder="영문/한글 닉네임 입력" maxlength="12"/>
+    <button class="btn btn-p" id="login-btn" disabled onclick="doLogin()">시작하기 →</button>
+    <div class="div-row"><div class="div-line"></div><span class="div-txt">간편 로그인 (준비 중)</span><div class="div-line"></div></div>
+    <div class="oauth-row">
+      <button class="oauth-btn" onclick="toggleNotice()">
+        <svg width="15" height="15" viewBox="0 0 18 18" fill="none"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908C16.418 13.415 17.64 11.107 17.64 9.2z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+        Google
+      </button>
+      <button class="oauth-btn" onclick="toggleNotice()">
+        <svg width="15" height="15" viewBox="0 0 18 18" fill="currentColor"><path d="M12.96 0c.064 1.08-.297 2.136-.965 2.912-.67.78-1.67 1.39-2.71 1.31C9.17 3.17 9.51 2.1 10.2 1.3 10.88.5 12 .02 12.96 0zM16.4 12.07c-.48 1.07-1.06 2.06-1.9 2.85-.69.65-1.42 1.3-2.45 1.32-1 .02-1.32-.6-2.46-.59-1.14.01-1.49.61-2.49.61-1.02.02-1.8-.71-2.52-1.38-1.9-1.78-3.38-5.08-2.83-8.24.35-1.98 1.39-3.79 2.96-4.9.78-.56 1.74-.9 2.73-.87 1.02.03 1.97.65 2.61.65.64 0 1.83-.8 3.07-.68.52.02 1.99.21 2.93 1.6-.08.05-1.74 1.02-1.72 3.04.02 2.42 2.12 3.22 2.07 3.59z"/></svg>
+        Apple
+      </button>
+    </div>
+    <div class="notice" id="notice">Google/Apple 로그인은 서버 연동 후 지원 예정입니다.<br>지금은 닉네임으로 시작해주세요!</div>
+  </div>
+</div>
 
-  <!-- ONBOARDING -->
-  <div class="screen onboarding-screen" id="screen-onboarding">
-    <div class="ob-step">STEP 01</div>
-    <div class="ob-title">내 영어 레벨 선택</div>
-    <div class="ob-sub">AI가 레벨에 맞는 단어를 실시간으로 출제해요.<br>매번 새로운 단어가 나와요!</div>
-    <div class="level-list">
-      <div class="level-item" data-level="kindergarten" onclick="selectLevel(this)">
-        <div class="level-icon">🌱</div>
-        <div class="level-text"><div class="level-name">유치원</div><div class="level-desc">color, cat, big, happy… 일상 기초 단어</div></div>
-        <div class="level-check"></div>
-      </div>
-      <div class="level-item" data-level="elementary" onclick="selectLevel(this)">
-        <div class="level-icon">📚</div>
-        <div class="level-text"><div class="level-name">초등</div><div class="level-desc">adventure, discover… 교과서 어휘</div></div>
-        <div class="level-check"></div>
-      </div>
-      <div class="level-item" data-level="high" onclick="selectLevel(this)">
-        <div class="level-icon">🎓</div>
-        <div class="level-text"><div class="level-name">고등</div><div class="level-desc">ambiguous, persevere… 수능 빈출</div></div>
-        <div class="level-check"></div>
-      </div>
-      <div class="level-item" data-level="university" onclick="selectLevel(this)">
-        <div class="level-icon">🏛️</div>
-        <div class="level-text"><div class="level-name">대학교</div><div class="level-desc">paradigm, epistemology… 학술 어휘</div></div>
-        <div class="level-check"></div>
-      </div>
-      <div class="level-item" data-level="expert" onclick="selectLevel(this)">
-        <div class="level-icon">⚡</div>
-        <div class="level-text"><div class="level-name">전문가</div><div class="level-desc">solipsism, laconic… 고급·비즈니스</div></div>
-        <div class="level-check"></div>
-      </div>
+<!-- ONBOARDING -->
+<div class="screen ob-screen" id="screen-onboarding">
+  <div class="ob-step">STEP 01 / 02</div>
+  <div class="ob-title">레벨 선택</div>
+  <div class="ob-sub">레벨별로 다양한 단어가 출제돼요</div>
+  <div class="level-list" id="level-list">
+    <div class="lv-item" data-level="kindergarten" onclick="selectLevel(this)">
+      <div class="lv-icon">🌱</div>
+      <div class="lv-text"><div class="lv-name">유치원</div><div class="lv-desc">cat, big, run, happy… 기초 생활 단어 100+</div></div>
+      <div class="lv-chk"></div>
     </div>
-    <button class="btn-primary" id="start-btn" onclick="startGame()" disabled>AI 단어 생성 시작 →</button>
+    <div class="lv-item" data-level="elementary" onclick="selectLevel(this)">
+      <div class="lv-icon">📚</div>
+      <div class="lv-text"><div class="lv-name">초등</div><div class="lv-desc">adventure, discover… 교과서 어휘 100+</div></div>
+      <div class="lv-chk"></div>
+    </div>
+    <div class="lv-item" data-level="high" onclick="selectLevel(this)">
+      <div class="lv-icon">🎓</div>
+      <div class="lv-text"><div class="lv-name">고등</div><div class="lv-desc">ambiguous, eloquent… 수능 빈출 100+</div></div>
+      <div class="lv-chk"></div>
+    </div>
+    <div class="lv-item" data-level="university" onclick="selectLevel(this)">
+      <div class="lv-icon">🏛️</div>
+      <div class="lv-text"><div class="lv-name">대학교</div><div class="lv-desc">paradigm, hegemony… 학술 어휘 100+</div></div>
+      <div class="lv-chk"></div>
+    </div>
+    <div class="lv-item" data-level="expert" onclick="selectLevel(this)">
+      <div class="lv-icon">⚡</div>
+      <div class="lv-text"><div class="lv-name">전문가</div><div class="lv-desc">solipsism, laconic… 고급·원어민 100+</div></div>
+      <div class="lv-chk"></div>
+    </div>
   </div>
+  <div class="lives-setting">
+    <div class="ls-title">목숨 설정</div>
+    <div class="ls-row" id="ls-row">
+      <div class="ls-opt sel" data-lives="3" onclick="selectLives(this)"><span class="ls-hearts">❤❤❤</span><span class="ls-label">보통</span></div>
+      <div class="ls-opt" data-lives="5" onclick="selectLives(this)"><span class="ls-hearts">❤❤❤❤❤</span><span class="ls-label">쉬움</span></div>
+      <div class="ls-opt" data-lives="1" onclick="selectLives(this)"><span class="ls-hearts">❤</span><span class="ls-label">극한</span></div>
+    </div>
+  </div>
+  <button class="btn btn-p" id="start-btn" disabled onclick="startGame()">게임 시작 →</button>
+</div>
 
-  <!-- GAME -->
-  <div class="screen game-screen" id="screen-game">
-    <div class="game-header">
-      <div class="lives" id="lives-display"></div>
-      <div class="stage-center">
-        <div class="stage-label">STAGE</div>
-        <div class="stage-number" id="stage-num">1</div>
-        <div class="level-pill" id="level-pill">유치원</div>
-      </div>
-      <div class="best-right">
-        <div class="best-label">BEST</div>
-        <div class="best-number" id="best-num">0</div>
-      </div>
+<!-- GAME -->
+<div class="screen game-screen" id="screen-game">
+  <div class="game-hdr">
+    <div class="lives-row" id="lives-disp"></div>
+    <div class="stage-mid">
+      <div class="stg-lbl">STAGE</div>
+      <div class="stg-num" id="stg-num">1</div>
+      <div class="lv-pill" id="lv-pill">유치원</div>
     </div>
-    <div class="game-body">
-      <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:5%"></div></div>
-      <div class="word-card">
-        <div id="word-loading" style="display:none">
-          <div class="loading-dots"><span></span><span></span><span></span></div>
-          <div class="loading-text">AI가 단어 생성 중...</div>
-        </div>
-        <div id="word-content">
-          <div class="word-en" id="word-en">—</div>
-          <div class="word-phonetic" id="word-phonetic"></div>
-        </div>
-      </div>
-      <div class="options-grid" id="options-grid"></div>
-      <div class="feedback-wrap">
-        <div class="feedback-bar" id="feedback-bar">
-          <div class="fb-title" id="fb-title"></div>
-          <div class="fb-hint" id="fb-hint"></div>
-        </div>
-      </div>
-    </div>
-    <div class="upgrade-overlay" id="upgrade-overlay">
-      <div class="upgrade-badge" id="upgrade-badge">🏆</div>
-      <div class="upgrade-stars">★ ★ ★</div>
-      <div class="upgrade-title" id="upgrade-title">레벨 클리어!</div>
-      <div class="upgrade-sub" id="upgrade-sub"></div>
-      <button class="btn-primary" style="max-width:220px" onclick="closeUpgrade()">계속하기 →</button>
+    <div class="best-right">
+      <div class="best-lbl">BEST</div>
+      <div class="best-num" id="best-num">0</div>
     </div>
   </div>
+  <div class="game-body">
+    <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:5%"></div></div>
+    <div class="word-card">
+      <div id="ld-area" style="display:none;flex-direction:column;align-items:center">
+        <div class="ld-dots"><span></span><span></span><span></span></div>
+        <div class="ld-txt">단어 로딩 중...</div>
+      </div>
+      <div id="word-area">
+        <div class="word-en" id="word-en">—</div>
+        <div class="word-ph" id="word-ph"></div>
+      </div>
+    </div>
+    <div class="opts" id="opts"></div>
+    <div class="fb-wrap"><div class="fb" id="fb"><div class="fb-t" id="fb-t"></div><div class="fb-h" id="fb-h"></div></div></div>
+  </div>
+  <div class="up-ov" id="up-ov">
+    <div class="up-badge" id="up-badge">🏆</div>
+    <div class="up-stars">★ ★ ★</div>
+    <div class="up-title" id="up-title">LEVEL CLEAR!</div>
+    <div class="up-sub" id="up-sub"></div>
+    <button class="btn btn-p" style="max-width:200px" onclick="closeUp()">계속하기 →</button>
+  </div>
+</div>
 
-  <!-- GAME OVER -->
-  <div class="screen gameover-screen" id="screen-gameover">
-    <div class="go-emoji">💀</div>
-    <div class="go-title">GAME OVER</div>
-    <div class="go-sub" id="go-sub"></div>
-    <div class="go-grid">
-      <div class="go-stat"><div class="go-stat-label">도달 스테이지</div><div class="go-stat-value accent" id="go-stage">1</div></div>
-      <div class="go-stat"><div class="go-stat-label">최고 기록</div><div class="go-stat-value gold" id="go-best">0</div></div>
-      <div class="go-stat"><div class="go-stat-label">정답</div><div class="go-stat-value" id="go-correct">0</div></div>
-      <div class="go-stat"><div class="go-stat-label">오답</div><div class="go-stat-value" id="go-wrong">0</div></div>
-    </div>
-    <div class="go-actions">
-      <button class="btn-primary" onclick="retryGame()">다시 도전 →</button>
-      <button class="btn-ghost" onclick="showWrongWords()">틀린 단어 복습</button>
-    </div>
+<!-- RANKING -->
+<div class="screen rank-screen" id="screen-ranking">
+  <div class="rank-hdr">
+    <div class="rank-title">🏆 RANKING</div>
+    <button class="rank-close" onclick="closeRanking()">← 돌아가기</button>
   </div>
+  <div class="rank-list" id="rank-list"></div>
+  <button class="btn btn-p" onclick="retryFromRanking()">다시 도전 →</button>
+</div>
+
+<!-- GAME OVER -->
+<div class="screen go-screen" id="screen-gameover">
+  <div class="go-emoji">💀</div>
+  <div class="go-title">GAME OVER</div>
+  <div class="go-sub" id="go-sub"></div>
+  <div class="go-grid">
+    <div class="go-stat"><div class="go-sl">STAGE</div><div class="go-sv acc" id="go-stg">1</div></div>
+    <div class="go-stat"><div class="go-sl">BEST</div><div class="go-sv gold" id="go-best">0</div></div>
+    <div class="go-stat"><div class="go-sl">정답</div><div class="go-sv" id="go-ok">0</div></div>
+    <div class="go-stat"><div class="go-sl">오답</div><div class="go-sv" id="go-no">0</div></div>
+  </div>
+  <div class="go-acts">
+    <button class="btn btn-p" onclick="retryGame()">다시 도전 →</button>
+    <button class="btn btn-gold" onclick="showRanking()">🏆 랭킹 보기</button>
+    <button class="btn btn-o" onclick="showWrong()">틀린 단어 복습</button>
+  </div>
+</div>
 
 </div>
 <script>
-const LEVEL_NAMES = { kindergarten:'유치원', elementary:'초등', high:'고등', university:'대학교', expert:'전문가', native:'원어민' };
-const LEVEL_ORDER = ['kindergarten','elementary','high','university','expert','native'];
+// ===== WORD BANK (각 레벨 50개 이상) =====
+const WB = {
+kindergarten:[
+  {w:'apple',p:'/ˈæpl/',k:'사과',o:['바나나','사과','포도','딸기']},
+  {w:'dog',p:'/dɒɡ/',k:'강아지',o:['고양이','강아지','새','물고기']},
+  {w:'sun',p:'/sʌn/',k:'태양',o:['달','구름','태양','별']},
+  {w:'book',p:'/bʊk/',k:'책',o:['책','공책','연필','지우개']},
+  {w:'water',p:'/ˈwɔːtər/',k:'물',o:['불','물','흙','공기']},
+  {w:'happy',p:'/ˈhæpi/',k:'행복한',o:['슬픈','화난','행복한','무서운']},
+  {w:'red',p:'/rɛd/',k:'빨간',o:['파란','빨간','노란','초록']},
+  {w:'run',p:'/rʌn/',k:'달리다',o:['먹다','자다','달리다','앉다']},
+  {w:'big',p:'/bɪɡ/',k:'큰',o:['작은','큰','빠른','느린']},
+  {w:'small',p:'/smɔːl/',k:'작은',o:['작은','큰','높은','낮은']},
+  {w:'cat',p:'/kæt/',k:'고양이',o:['강아지','고양이','토끼','새']},
+  {w:'bird',p:'/bɜːrd/',k:'새',o:['새','물고기','토끼','사자']},
+  {w:'tree',p:'/triː/',k:'나무',o:['꽃','나무','풀','바위']},
+  {w:'hot',p:'/hɒt/',k:'뜨거운',o:['차가운','뜨거운','따뜻한','시원한']},
+  {w:'cold',p:'/koʊld/',k:'차가운',o:['차가운','뜨거운','따뜻한','시원한']},
+  {w:'fast',p:'/fæst/',k:'빠른',o:['느린','빠른','강한','약한']},
+  {w:'slow',p:'/sloʊ/',k:'느린',o:['느린','빠른','높은','낮은']},
+  {w:'eat',p:'/iːt/',k:'먹다',o:['마시다','먹다','자다','놀다']},
+  {w:'sleep',p:'/sliːp/',k:'자다',o:['자다','깨다','먹다','달리다']},
+  {w:'love',p:'/lʌv/',k:'사랑',o:['미움','사랑','두려움','기쁨']},
+  {w:'friend',p:'/frɛnd/',k:'친구',o:['친구','가족','선생님','적']},
+  {w:'ball',p:'/bɔːl/',k:'공',o:['공','컵','책','가방']},
+  {w:'house',p:'/haʊs/',k:'집',o:['집','학교','병원','공원']},
+  {w:'car',p:'/kɑːr/',k:'자동차',o:['자전거','자동차','기차','배']},
+  {w:'blue',p:'/bluː/',k:'파란',o:['빨간','파란','노란','초록']},
+  {w:'green',p:'/ɡriːn/',k:'초록',o:['초록','파란','빨간','노란']},
+  {w:'jump',p:'/dʒʌmp/',k:'점프하다',o:['걷다','뛰다','점프하다','앉다']},
+  {w:'play',p:'/pleɪ/',k:'놀다',o:['공부하다','자다','놀다','먹다']},
+  {w:'good',p:'/ɡʊd/',k:'좋은',o:['나쁜','좋은','빠른','느린']},
+  {w:'bad',p:'/bæd/',k:'나쁜',o:['나쁜','좋은','새로운','오래된']},
+  {w:'new',p:'/njuː/',k:'새로운',o:['오래된','새로운','빠른','느린']},
+  {w:'old',p:'/oʊld/',k:'오래된',o:['오래된','새로운','작은','큰']},
+  {w:'day',p:'/deɪ/',k:'낮',o:['밤','낮','아침','저녁']},
+  {w:'night',p:'/naɪt/',k:'밤',o:['밤','낮','아침','저녁']},
+  {w:'rain',p:'/reɪn/',k:'비',o:['비','눈','바람','안개']},
+  {w:'snow',p:'/snoʊ/',k:'눈',o:['비','눈','바람','안개']},
+  {w:'fish',p:'/fɪʃ/',k:'물고기',o:['새','물고기','개구리','뱀']},
+  {w:'bread',p:'/brɛd/',k:'빵',o:['빵','밥','과자','케이크']},
+  {w:'milk',p:'/mɪlk/',k:'우유',o:['주스','물','우유','차']},
+  {w:'open',p:'/ˈoʊpən/',k:'열다',o:['닫다','열다','넣다','꺼내다']},
+  {w:'close',p:'/kloʊz/',k:'닫다',o:['닫다','열다','들어가다','나오다']},
+  {w:'tall',p:'/tɔːl/',k:'키가 큰',o:['키가 작은','키가 큰','뚱뚱한','날씬한']},
+  {w:'short',p:'/ʃɔːrt/',k:'짧은',o:['짧은','긴','높은','낮은']},
+  {w:'flower',p:'/ˈflaʊər/',k:'꽃',o:['꽃','나무','풀','열매']},
+  {w:'moon',p:'/muːn/',k:'달',o:['달','별','태양','구름']},
+  {w:'chair',p:'/tʃɛr/',k:'의자',o:['의자','침대','책상','소파']},
+  {w:'table',p:'/ˈteɪbl/',k:'탁자',o:['탁자','의자','침대','책장']},
+  {w:'door',p:'/dɔːr/',k:'문',o:['문','창문','벽','천장']},
+  {w:'eye',p:'/aɪ/',k:'눈',o:['귀','코','눈','입']},
+  {w:'hand',p:'/hænd/',k:'손',o:['발','손','머리','다리']},
+],
+elementary:[
+  {w:'adventure',p:'/ədˈvɛntʃər/',k:'모험',o:['여행','모험','공부','휴식']},
+  {w:'library',p:'/ˈlaɪbrɛri/',k:'도서관',o:['학교','병원','도서관','공원']},
+  {w:'planet',p:'/ˈplænɪt/',k:'행성',o:['행성','별자리','달','혜성']},
+  {w:'recipe',p:'/ˈrɛsɪpi/',k:'조리법',o:['조리법','재료','요리사','냄비']},
+  {w:'discover',p:'/dɪˈskʌvər/',k:'발견하다',o:['잃다','숨기다','발견하다','찾다']},
+  {w:'mountain',p:'/ˈmaʊntɪn/',k:'산',o:['강','바다','산','호수']},
+  {w:'science',p:'/ˈsaɪəns/',k:'과학',o:['수학','과학','역사','음악']},
+  {w:'grateful',p:'/ˈɡreɪtfəl/',k:'감사하는',o:['화난','감사하는','지루한','즐거운']},
+  {w:'protect',p:'/prəˈtɛkt/',k:'보호하다',o:['보호하다','공격하다','무시하다','돕다']},
+  {w:'journey',p:'/ˈdʒɜːrni/',k:'여정',o:['여정','목적지','출발','도착']},
+  {w:'curious',p:'/ˈkjʊəriəs/',k:'호기심 있는',o:['무관심한','호기심 있는','두려운','지루한']},
+  {w:'celebrate',p:'/ˈsɛlɪbreɪt/',k:'축하하다',o:['슬퍼하다','축하하다','기억하다','잊다']},
+  {w:'neighbor',p:'/ˈneɪbər/',k:'이웃',o:['친구','이웃','가족','낯선 사람']},
+  {w:'forest',p:'/ˈfɒrɪst/',k:'숲',o:['사막','숲','초원','바다']},
+  {w:'season',p:'/ˈsiːzən/',k:'계절',o:['날씨','계절','기후','온도']},
+  {w:'environment',p:'/ɪnˈvaɪərənmənt/',k:'환경',o:['환경','날씨','자연','지구']},
+  {w:'volunteer',p:'/ˌvɒlənˈtɪər/',k:'자원봉사자',o:['자원봉사자','직원','군인','학생']},
+  {w:'collect',p:'/kəˈlɛkt/',k:'모으다',o:['버리다','나누다','모으다','잃다']},
+  {w:'explain',p:'/ɪkˈspleɪn/',k:'설명하다',o:['설명하다','이해하다','질문하다','모르다']},
+  {w:'imagine',p:'/ɪˈmædʒɪn/',k:'상상하다',o:['기억하다','상상하다','잊다','생각하다']},
+  {w:'colorful',p:'/ˈkʌlərfəl/',k:'다채로운',o:['단순한','화려한','다채로운','지루한']},
+  {w:'serious',p:'/ˈsɪəriəs/',k:'진지한',o:['가벼운','진지한','우스운','슬픈']},
+  {w:'effort',p:'/ˈɛfərt/',k:'노력',o:['결과','노력','실수','성공']},
+  {w:'teamwork',p:'/ˈtiːmwɜːrk/',k:'팀워크',o:['경쟁','팀워크','갈등','협력']},
+  {w:'promise',p:'/ˈprɒmɪs/',k:'약속',o:['약속','거짓말','비밀','계획']},
+  {w:'respect',p:'/rɪˈspɛkt/',k:'존경',o:['무시','존경','두려움','사랑']},
+  {w:'creative',p:'/kriˈeɪtɪv/',k:'창의적인',o:['평범한','창의적인','지루한','따분한']},
+  {w:'ancient',p:'/ˈeɪnʃənt/',k:'고대의',o:['현대의','미래의','고대의','중세의']},
+  {w:'temperature',p:'/ˈtɛmprɪtʃər/',k:'온도',o:['온도','날씨','기후','습도']},
+  {w:'disappear',p:'/ˌdɪsəˈpɪər/',k:'사라지다',o:['나타나다','사라지다','변하다','남다']},
+  {w:'friendship',p:'/ˈfrɛndʃɪp/',k:'우정',o:['우정','사랑','미움','질투']},
+  {w:'courage',p:'/ˈkɜːrɪdʒ/',k:'용기',o:['두려움','용기','분노','슬픔']},
+  {w:'fantastic',p:'/fænˈtæstɪk/',k:'환상적인',o:['끔찍한','환상적인','평범한','지루한']},
+  {w:'improve',p:'/ɪmˈpruːv/',k:'향상시키다',o:['악화시키다','향상시키다','유지하다','포기하다']},
+  {w:'practice',p:'/ˈpræktɪs/',k:'연습',o:['연습','결과','실수','성공']},
+  {w:'dangerous',p:'/ˈdeɪndʒərəs/',k:'위험한',o:['안전한','위험한','평화로운','조용한']},
+  {w:'popular',p:'/ˈpɒpjʊlər/',k:'인기 있는',o:['무명의','인기 있는','유명한','평범한']},
+  {w:'delicious',p:'/dɪˈlɪʃəs/',k:'맛있는',o:['맛없는','맛있는','달콤한','쓴']},
+  {w:'important',p:'/ɪmˈpɔːrtənt/',k:'중요한',o:['사소한','중요한','비싼','무거운']},
+  {w:'beautiful',p:'/ˈbjuːtɪfəl/',k:'아름다운',o:['못생긴','아름다운','이상한','평범한']},
+  {w:'tradition',p:'/trəˈdɪʃən/',k:'전통',o:['전통','문화','역사','관습']},
+  {w:'universe',p:'/ˈjuːnɪvɜːrs/',k:'우주',o:['지구','우주','세계','자연']},
+  {w:'powerful',p:'/ˈpaʊərfəl/',k:'강력한',o:['약한','강력한','조용한','느린']},
+  {w:'mystery',p:'/ˈmɪstəri/',k:'수수께끼',o:['진실','수수께끼','답','거짓말']},
+  {w:'energy',p:'/ˈɛnərʤi/',k:'에너지',o:['에너지','물질','공간','시간']},
+  {w:'challenge',p:'/ˈtʃælɪndʒ/',k:'도전',o:['포기','도전','실패','성공']},
+  {w:'comfortable',p:'/ˈkʌmftəbl/',k:'편안한',o:['불편한','편안한','시끄러운','조용한']},
+  {w:'honest',p:'/ˈɒnɪst/',k:'정직한',o:['거짓된','정직한','친절한','용감한']},
+  {w:'solution',p:'/səˈluːʃən/',k:'해결책',o:['문제','해결책','원인','결과']},
+  {w:'freedom',p:'/ˈfriːdəm/',k:'자유',o:['자유','구속','평화','전쟁']},
+],
+high:[
+  {w:'ambiguous',p:'/æmˈbɪɡjuəs/',k:'모호한',o:['명확한','모호한','분명한','구체적인']},
+  {w:'eloquent',p:'/ˈɛləkwənt/',k:'웅변적인',o:['조용한','웅변적인','말 없는','수줍은']},
+  {w:'inevitable',p:'/ɪnˈɛvɪtəbl/',k:'불가피한',o:['피할 수 있는','불가피한','선택적인','우연한']},
+  {w:'persevere',p:'/ˌpɜːrsɪˈvɪər/',k:'인내하다',o:['포기하다','인내하다','떠나다','무시하다']},
+  {w:'contemplate',p:'/ˈkɒntəmpleɪt/',k:'심사숙고하다',o:['서두르다','심사숙고하다','잊다','결정하다']},
+  {w:'hypothesis',p:'/haɪˈpɒθɪsɪs/',k:'가설',o:['결론','가설','사실','증거']},
+  {w:'nuance',p:'/ˈnjuːɑːns/',k:'미묘한 차이',o:['큰 차이','미묘한 차이','명백한 차이','공통점']},
+  {w:'rhetoric',p:'/ˈrɛtərɪk/',k:'수사학',o:['문법','수사학','논리학','철학']},
+  {w:'reluctant',p:'/rɪˈlʌktənt/',k:'꺼리는',o:['열정적인','꺼리는','즐거운','자발적인']},
+  {w:'emphasize',p:'/ˈɛmfəsaɪz/',k:'강조하다',o:['무시하다','강조하다','반박하다','설명하다']},
+  {w:'perspective',p:'/pərˈspɛktɪv/',k:'관점',o:['사실','관점','증거','의견']},
+  {w:'profound',p:'/prəˈfaʊnd/',k:'심오한',o:['얕은','심오한','단순한','평범한']},
+  {w:'sustain',p:'/səˈsteɪn/',k:'유지하다',o:['파괴하다','유지하다','포기하다','시작하다']},
+  {w:'explicit',p:'/ɪkˈsplɪsɪt/',k:'명시적인',o:['암시적인','명시적인','모호한','숨겨진']},
+  {w:'implicit',p:'/ɪmˈplɪsɪt/',k:'암묵적인',o:['명시적인','암묵적인','분명한','직접적인']},
+  {w:'dilemma',p:'/dɪˈlɛmə/',k:'딜레마',o:['해결책','딜레마','선택','목표']},
+  {w:'criterion',p:'/kraɪˈtɪəriən/',k:'기준',o:['결과','기준','방법','목적']},
+  {w:'irony',p:'/ˈaɪrəni/',k:'반어',o:['직설','비유','반어','과장']},
+  {w:'aesthetic',p:'/ɛsˈθɛtɪk/',k:'미적인',o:['실용적인','미적인','도덕적인','이론적인']},
+  {w:'integrity',p:'/ɪnˈtɛɡrɪti/',k:'정직성',o:['부정직','정직성','능력','지식']},
+  {w:'analogy',p:'/əˈnælədʒi/',k:'유추',o:['증거','유추','반론','사실']},
+  {w:'ambivalent',p:'/æmˈbɪvələnt/',k:'양가감정의',o:['확신하는','양가감정의','무관심한','열정적인']},
+  {w:'pragmatic',p:'/præɡˈmætɪk/',k:'실용적인',o:['이상적인','실용적인','감정적인','추상적인']},
+  {w:'coherent',p:'/koʊˈhɪərənt/',k:'일관된',o:['모순된','일관된','복잡한','단순한']},
+  {w:'subtle',p:'/ˈsʌtl/',k:'미묘한',o:['뚜렷한','미묘한','명확한','강렬한']},
+  {w:'phenomenon',p:'/fɪˈnɒmɪnən/',k:'현상',o:['현상','원인','결과','이론']},
+  {w:'contradiction',p:'/ˌkɒntrəˈdɪkʃən/',k:'모순',o:['일치','모순','증거','논리']},
+  {w:'arbitrary',p:'/ˈɑːrbɪtrɛri/',k:'임의적인',o:['체계적인','임의적인','필연적인','논리적인']},
+  {w:'eccentric',p:'/ɪkˈsɛntrɪk/',k:'괴짜의',o:['평범한','괴짜의','정상적인','보수적인']},
+  {w:'inevitable',p:'/ɪnˈɛvɪtəbl/',k:'불가피한',o:['피할 수 있는','불가피한','선택적인','우연한']},
+  {w:'vague',p:'/veɪɡ/',k:'애매한',o:['명확한','애매한','구체적인','정확한']},
+  {w:'diligent',p:'/ˈdɪlɪdʒənt/',k:'부지런한',o:['게으른','부지런한','조용한','시끄러운']},
+  {w:'compensate',p:'/ˈkɒmpənseɪt/',k:'보상하다',o:['빼앗다','보상하다','무시하다','요구하다']},
+  {w:'distinguish',p:'/dɪˈstɪŋɡwɪʃ/',k:'구별하다',o:['혼동하다','구별하다','합치다','나누다']},
+  {w:'flexible',p:'/ˈflɛksɪbl/',k:'유연한',o:['딱딱한','유연한','강한','약한']},
+  {w:'justify',p:'/ˈdʒʌstɪfaɪ/',k:'정당화하다',o:['비판하다','정당화하다','포기하다','반박하다']},
+  {w:'motivate',p:'/ˈmoʊtɪveɪt/',k:'동기를 주다',o:['낙담시키다','동기를 주다','명령하다','금지하다']},
+  {w:'objective',p:'/əbˈdʒɛktɪv/',k:'객관적인',o:['주관적인','객관적인','감정적인','편향된']},
+  {w:'subjective',p:'/səbˈdʒɛktɪv/',k:'주관적인',o:['주관적인','객관적인','중립적인','공정한']},
+  {w:'anticipate',p:'/ænˈtɪsɪpeɪt/',k:'예상하다',o:['기억하다','예상하다','후회하다','무시하다']},
+  {w:'diverse',p:'/daɪˈvɜːrs/',k:'다양한',o:['단일한','다양한','복잡한','단순한']},
+  {w:'acknowledge',p:'/əkˈnɒlɪdʒ/',k:'인정하다',o:['부정하다','인정하다','주장하다','설명하다']},
+  {w:'eliminate',p:'/ɪˈlɪmɪneɪt/',k:'제거하다',o:['추가하다','제거하다','유지하다','변경하다']},
+  {w:'facilitate',p:'/fəˈsɪlɪteɪt/',k:'촉진하다',o:['방해하다','촉진하다','지연시키다','포기하다']},
+  {w:'manipulate',p:'/məˈnɪpjʊleɪt/',k:'조종하다',o:['존중하다','조종하다','무시하다','이해하다']},
+  {w:'inevitable',p:'/ɪnˈɛvɪtəbl/',k:'불가피한',o:['피할 수 있는','불가피한','선택적인','우연한']},
+  {w:'substantial',p:'/səbˈstænʃəl/',k:'상당한',o:['사소한','상당한','작은','미미한']},
+  {w:'contradict',p:'/ˌkɒntrəˈdɪkt/',k:'반박하다',o:['동의하다','반박하다','설명하다','확인하다']},
+  {w:'perceive',p:'/pərˈsiːv/',k:'인식하다',o:['무시하다','인식하다','잊다','기억하다']},
+  {w:'reinforce',p:'/ˌriːɪnˈfɔːrs/',k:'강화하다',o:['약화시키다','강화하다','유지하다','제거하다']},
+],
+university:[
+  {w:'paradigm',p:'/ˈpærədaɪm/',k:'패러다임',o:['이론','패러다임','실험','분석']},
+  {w:'empirical',p:'/ɪmˈpɪrɪkəl/',k:'경험적인',o:['이론적인','경험적인','추상적인','직관적인']},
+  {w:'dichotomy',p:'/daɪˈkɒtəmi/',k:'이분법',o:['삼분법','이분법','연속성','통합']},
+  {w:'epistemology',p:'/ɪˌpɪstɪˈmɒlədʒi/',k:'인식론',o:['존재론','인식론','윤리학','미학']},
+  {w:'hegemony',p:'/hɪˈɡɛməni/',k:'헤게모니',o:['민주주의','헤게모니','평등','저항']},
+  {w:'synthesis',p:'/ˈsɪnθɪsɪs/',k:'종합',o:['분석','종합','분리','비교']},
+  {w:'ambivalent',p:'/æmˈbɪvələnt/',k:'양가감정의',o:['확신하는','양가감정의','무관심한','열정적인']},
+  {w:'ontology',p:'/ɒnˈtɒlədʒi/',k:'존재론',o:['인식론','존재론','윤리학','논리학']},
+  {w:'axiom',p:'/ˈæksiəm/',k:'공리',o:['가설','공리','이론','법칙']},
+  {w:'dialectic',p:'/ˌdaɪəˈlɛktɪk/',k:'변증법',o:['귀납법','변증법','연역법','수사학']},
+  {w:'hermeneutics',p:'/ˌhɜːrmɪˈnjuːtɪks/',k:'해석학',o:['언어학','해석학','논리학','수사학']},
+  {w:'phenomenology',p:'/fɪˌnɒmɪˈnɒlədʒi/',k:'현상학',o:['심리학','현상학','사회학','철학']},
+  {w:'teleology',p:'/ˌtɛliˈɒlədʒi/',k:'목적론',o:['인과론','목적론','결정론','운명론']},
+  {w:'reductionism',p:'/rɪˈdʌkʃənɪzəm/',k:'환원주의',o:['전체론','환원주의','상대주의','절대주의']},
+  {w:'semiotics',p:'/ˌsiːmiˈɒtɪks/',k:'기호학',o:['음성학','기호학','형태론','통사론']},
+  {w:'ideology',p:'/ˌaɪdiˈɒlədʒi/',k:'이념',o:['종교','이념','문화','전통']},
+  {w:'discursive',p:'/dɪˈskɜːrsɪv/',k:'담론적인',o:['직관적인','담론적인','연역적인','귀납적인']},
+  {w:'postulate',p:'/ˈpɒstjʊleɪt/',k:'가정하다',o:['증명하다','가정하다','반박하다','관찰하다']},
+  {w:'normative',p:'/ˈnɔːrmətɪv/',k:'규범적인',o:['서술적인','규범적인','분석적인','경험적인']},
+  {w:'contingent',p:'/kənˈtɪndʒənt/',k:'우발적인',o:['필연적인','우발적인','계획된','예측된']},
+  {w:'determinism',p:'/dɪˈtɜːrmɪnɪzəm/',k:'결정론',o:['자유의지론','결정론','허무주의','운명론']},
+  {w:'tautology',p:'/tɔːˈtɒlədʒi/',k:'동어반복',o:['모순','동어반복','유추','반어']},
+  {w:'heuristic',p:'/hjʊˈrɪstɪk/',k:'발견적인',o:['체계적인','발견적인','직관적인','연역적인']},
+  {w:'pragmatism',p:'/ˈpræɡmətɪzəm/',k:'실용주의',o:['이상주의','실용주의','허무주의','합리주의']},
+  {w:'alienation',p:'/ˌeɪliəˈneɪʃən/',k:'소외',o:['통합','소외','조화','연대']},
+  {w:'reification',p:'/ˌriːɪfɪˈkeɪʃən/',k:'물화',o:['추상화','물화','인격화','이상화']},
+  {w:'polysemy',p:'/pɒˈlɪsɪmi/',k:'다의어',o:['동음이의어','다의어','유의어','반의어']},
+  {w:'isomorphism',p:'/ˌaɪsəˈmɔːrfɪzəm/',k:'동형성',o:['동형성','이형성','유사성','차별성']},
+  {w:'metacognition',p:'/ˌmɛtəkɒɡˈnɪʃən/',k:'메타인지',o:['인지','메타인지','감각','직관']},
+  {w:'exegesis',p:'/ˌɛksɪˈdʒiːsɪs/',k:'주석',o:['번역','주석','요약','인용']},
+  {w:'liminality',p:'/ˌlɪmɪˈnælɪti/',k:'경계성',o:['중심성','경계성','주변성','내부성']},
+  {w:'intersubjectivity',p:'/ˌɪntərsʌbˌdʒɛktɪˈvɪti/',k:'상호주관성',o:['객관성','상호주관성','주관성','보편성']},
+  {w:'aporia',p:'/əˈpɔːriə/',k:'난점',o:['해결책','난점','방법론','전제']},
+  {w:'deontology',p:'/ˌdiːɒnˈtɒlədʒi/',k:'의무론',o:['결과론','의무론','덕 윤리학','계약론']},
+  {w:'realism',p:'/ˈriːəlɪzəm/',k:'사실주의',o:['이상주의','사실주의','낭만주의','상징주의']},
+  {w:'nominalism',p:'/ˈnɒmɪnəlɪzəm/',k:'유명론',o:['실재론','유명론','관념론','유물론']},
+  {w:'solipsism',p:'/ˈsɒlɪpsɪzəm/',k:'유아론',o:['유아론','이원론','허무주의','결정론']},
+  {w:'sublimation',p:'/ˌsʌblɪˈmeɪʃən/',k:'승화',o:['억압','승화','투사','합리화']},
+  {w:'catharsis',p:'/kəˈθɑːrsɪs/',k:'카타르시스',o:['억압','카타르시스','긴장','불안']},
+  {w:'genealogy',p:'/ˌdʒiːniˈælədʒi/',k:'계보학',o:['역사학','계보학','고고학','문헌학']},
+  {w:'mimesis',p:'/mɪˈmiːsɪs/',k:'모방',o:['창조','모방','발명','혁신']},
+  {w:'heresy',p:'/ˈhɛrɪsi/',k:'이단',o:['정통','이단','개혁','전통']},
+  {w:'dialectical',p:'/ˌdaɪəˈlɛktɪkəl/',k:'변증법적인',o:['귀납적인','변증법적인','연역적인','경험적인']},
+  {w:'transcendental',p:'/ˌtrænsenˈdɛntəl/',k:'초월적인',o:['경험적인','초월적인','내재적인','물질적인']},
+  {w:'immanence',p:'/ˈɪmənəns/',k:'내재성',o:['초월성','내재성','외재성','추상성']},
+  {w:'praxis',p:'/ˈpræksɪs/',k:'실천',o:['이론','실천','관찰','분석']},
+  {w:'hermeneutic',p:'/ˌhɜːrmɪˈnjuːtɪk/',k:'해석학적인',o:['분석적인','해석학적인','실증적인','연역적인']},
+  {w:'logocentrism',p:'/ˌlɒɡoʊˈsɛntrɪzəm/',k:'로고스중심주의',o:['음성중심주의','로고스중심주의','글쓰기중심주의','이미지중심주의']},
+  {w:'intertext',p:'/ˈɪntərˌtɛkst/',k:'상호텍스트',o:['원본','상호텍스트','패러디','인용']},
+  {w:'deconstruction',p:'/ˌdiːkənˈstrʌkʃən/',k:'해체',o:['구성','해체','분석','통합']},
+],
+expert:[
+  {w:'solipsism',p:'/ˈsɒlɪpsɪzəm/',k:'유아론',o:['유아론','이원론','허무주의','결정론']},
+  {w:'prelapsarian',p:'/ˌpriːlæpˈsɛərɪən/',k:'타락 이전의',o:['타락한','타락 이전의','신성한','세속적인']},
+  {w:'concatenation',p:'/kɒnˌkætɪˈneɪʃən/',k:'연쇄',o:['분리','연쇄','순환','단절']},
+  {w:'apocryphal',p:'/əˈpɒkrɪfəl/',k:'진위가 의심스러운',o:['진위가 의심스러운','검증된','역사적인','신화적인']},
+  {w:'laconic',p:'/ləˈkɒnɪk/',k:'간결한',o:['장황한','간결한','복잡한','모호한']},
+  {w:'sycophant',p:'/ˈsɪkəfænt/',k:'아첨꾼',o:['비평가','아첨꾼','지도자','반대자']},
+  {w:'tendentious',p:'/tɛnˈdɛnʃəs/',k:'편향된',o:['중립적인','편향된','균형잡힌','객관적인']},
+  {w:'weltanschauung',p:'/ˈvɛltɑːnˌʃaʊʊŋ/',k:'세계관',o:['세계관','현실관','종교관','가치관']},
+  {w:'perspicacious',p:'/ˌpɜːrspɪˈkeɪʃəs/',k:'통찰력 있는',o:['둔감한','통찰력 있는','무관심한','혼란스러운']},
+  {w:'recondite',p:'/ˈrɛkəndaɪt/',k:'심오한',o:['평범한','심오한','알려진','단순한']},
+  {w:'loquacious',p:'/loʊˈkweɪʃəs/',k:'수다스러운',o:['과묵한','수다스러운','조용한','내성적인']},
+  {w:'mellifluous',p:'/mɛˈlɪfluəs/',k:'감미로운',o:['귀에 거슬리는','감미로운','단조로운','시끄러운']},
+  {w:'ephemeral',p:'/ɪˈfɛmərəl/',k:'덧없는',o:['영구적인','덧없는','견고한','영속적인']},
+  {w:'lugubrious',p:'/luːˈɡjuːbriəs/',k:'슬픈',o:['유쾌한','슬픈','무관심한','흥분된']},
+  {w:'ebullient',p:'/ɪˈbʌliənt/',k:'활기찬',o:['우울한','활기찬','무기력한','조용한']},
+  {w:'equivocate',p:'/ɪˈkwɪvəkeɪt/',k:'얼버무리다',o:['솔직히 말하다','얼버무리다','주장하다','설명하다']},
+  {w:'obfuscate',p:'/ˈɒbfʌskeɪt/',k:'어렵게 하다',o:['명확히 하다','어렵게 하다','단순화하다','설명하다']},
+  {w:'propitious',p:'/prəˈpɪʃəs/',k:'유리한',o:['불리한','유리한','위험한','중립적인']},
+  {w:'vituperative',p:'/vɪˈtjuːpərətɪv/',k:'욕설의',o:['칭찬하는','욕설의','냉담한','중립적인']},
+  {w:'inimical',p:'/ɪˈnɪmɪkəl/',k:'적대적인',o:['우호적인','적대적인','중립적인','협력적인']},
+  {w:'palimpsest',p:'/ˈpælɪmpsɛst/',k:'팰림프세스트',o:['원본','팰림프세스트','복사본','초안']},
+  {w:'chiaroscuro',p:'/kiˌɑːrəˈskjʊəroʊ/',k:'명암법',o:['원근법','명암법','색채법','구도법']},
+  {w:'apotheosis',p:'/əˌpɒθiˈoʊsɪs/',k:'신격화',o:['타락','신격화','이상화','추방']},
+  {w:'tergiversate',p:'/ˈtɜːrdʒɪvɜːrseɪt/',k:'변절하다',o:['충성하다','변절하다','지지하다','유지하다']},
+  {w:'sesquipedalian',p:'/ˌsɛskwɪpɪˈdeɪliən/',k:'긴 단어를 즐겨 쓰는',o:['간결한','긴 단어를 즐겨 쓰는','유창한','무식한']},
+  {w:'defenestration',p:'/dɪˌfɛnɪˈstreɪʃən/',k:'창밖으로 던지기',o:['침범','창밖으로 던지기','투옥','추방']},
+  {w:'boustrophedon',p:'/ˌbaʊstrəˈfiːdən/',k:'좌우교대서법',o:['좌에서 우로 쓰기','좌우교대서법','위에서 아래로 쓰기','나선형 쓰기']},
+  {w:'tmesis',p:'/ˈtiːmɪsɪs/',k:'삽입분리법',o:['생략법','삽입분리법','도치법','병렬법']},
+  {w:'omphalos',p:'/ˈɒmfələs/',k:'세계의 중심',o:['변방','세계의 중심','끝','경계']},
+  {w:'hiraeth',p:'/ˈhɪraɪθ/',k:'고향에 대한 그리움',o:['방랑욕','고향에 대한 그리움','미래에 대한 희망','현재에 대한 만족']},
+  {w:'sonder',p:'/ˈsɒndər/',k:'타인도 깊은 삶이 있다는 깨달음',o:['고독감','타인도 깊은 삶이 있다는 깨달음','고통에 대한 무감각','세상의 무관심']},
+  {w:'petrichor',p:'/ˈpɛtrɪkɔːr/',k:'비 온 후 흙냄새',o:['꽃향기','비 온 후 흙냄새','바다 냄새','숲 냄새']},
+  {w:'vellichor',p:'/ˈvɛlɪkɔːr/',k:'헌책방의 분위기',o:['도서관의 냄새','헌책방의 분위기','카페의 소음','박물관의 정적']},
+  {w:'absquatulate',p:'/æbˈskwɒtʃʊleɪt/',k:'몰래 도망치다',o:['천천히 걷다','몰래 도망치다','공개적으로 떠나다','숨다']},
+  {w:'callipygian',p:'/ˌkælɪˈpɪdʒiən/',k:'아름다운 엉덩이를 가진',o:['아름다운 얼굴을 가진','아름다운 엉덩이를 가진','아름다운 손을 가진','아름다운 목소리를 가진']},
+  {w:'quiddity',p:'/ˈkwɪdɪti/',k:'본질',o:['현상','본질','외양','형식']},
+  {w:'numinous',p:'/ˈnjuːmɪnəs/',k:'신성한',o:['세속적인','신성한','금지된','허용된']},
+  {w:'sempiternal',p:'/ˌsɛmpɪˈtɜːrnəl/',k:'영원한',o:['일시적인','영원한','덧없는','순간적인']},
+  {w:'ineffable',p:'/ɪnˈɛfəbl/',k:'말로 표현할 수 없는',o:['명확히 설명할 수 있는','말로 표현할 수 없는','쉽게 이해되는','단순한']},
+  {w:'sanguine',p:'/ˈsæŋɡwɪn/',k:'낙관적인',o:['비관적인','낙관적인','냉담한','무관심한']},
+  {w:'truculent',p:'/ˈtrʌkjʊlənt/',k:'공격적인',o:['온화한','공격적인','수줍은','무관심한']},
+  {w:'pusillanimous',p:'/ˌpjuːsɪˈlænɪməs/',k:'소심한',o:['대담한','소심한','무모한','냉정한']},
+  {w:'grandiloquent',p:'/ɡrænˈdɪləkwənt/',k:'과장된',o:['간결한','과장된','직접적인','단순한']},
+  {w:'tendentious',p:'/tɛnˈdɛnʃəs/',k:'편향된',o:['공정한','편향된','중립적인','균형잡힌']},
+  {w:'logorrhea',p:'/ˌlɒɡəˈriːə/',k:'언어과다증',o:['침묵','언어과다증','말더듬','실어증']},
+  {w:'anfractuous',p:'/ænˈfræktʃuəs/',k:'구불구불한',o:['곧은','구불구불한','평평한','가파른']},
+  {w:'frangible',p:'/ˈfrændʒɪbl/',k:'깨지기 쉬운',o:['단단한','깨지기 쉬운','유연한','강인한']},
+  {w:'nugatory',p:'/ˈnjuːɡətɔːri/',k:'무가치한',o:['귀중한','무가치한','중요한','필수적인']},
+  {w:'opprobrium',p:'/əˈproʊbriəm/',k:'비난',o:['칭찬','비난','무관심','지지']},
+  {w:'recalcitrant',p:'/rɪˈkælsɪtrənt/',k:'반항적인',o:['순종적인','반항적인','무관심한','중립적인']},
+  {w:'shibboleth',p:'/ˈʃɪbəlɛθ/',k:'집단 식별어',o:['개인 비밀','집단 식별어','암호','서명']},
+]};
 
-const LEVEL_PROMPTS = {
-  kindergarten: '매우 쉬운 영어 단어 (유치원~초등 1학년 수준). 예: apple, dog, red, happy, run, big, small, eat, sleep, jump, blue, hot, cold, fast, friend. 한글 뜻은 1~3글자로 짧게.',
-  elementary: '초등학교 수준 영어 단어. 예: adventure, library, discover, grateful, planet, forest, celebrate, neighbor, protect, journey. 한글 뜻은 2~5글자.',
-  high: '고등학교/수능 수준 영어 단어. 예: ambiguous, eloquent, persevere, contemplate, hypothesis, inevitable, reluctant, emphasize, perspective. 한글 뜻은 3~7글자.',
-  university: '대학교/학술 수준 영어 단어. 예: paradigm, epistemology, hegemony, dichotomy, empirical, synthesis, phenomenon, bureaucracy, metaphysical. 한글 뜻은 3~8글자.',
-  expert: '전문가/고급 영어 단어. 예: solipsism, laconic, apocryphal, tendentious, prelapsarian, weltanschauung, sycophant, concatenation, perspicacious. 한글 뜻은 4~12글자.',
-  native: '원어민 수준 희귀 영어 단어. 매우 어렵고 생소한 단어. 예: sonder, hiraeth, petrichor, vellichor, quiddity, callipygian, defenestration. 한글 뜻 포함.',
+// ===== STATE =====
+const LN = {kindergarten:'유치원',elementary:'초등',high:'고등',university:'대학교',expert:'전문가',native:'원어민'};
+const LO = ['kindergarten','elementary','high','university','expert','native'];
+
+let G = {
+  nick:'', selLv:null, curLv:null,
+  stage:1, best:0, lives:3, maxLives:3,
+  correct:0, wrong:0,
+  curWord:null, answered:false,
+  wrongWords:[], usedIdx:{},
 };
 
-let state = {
-  nickname: '', selectedLevel: null, currentLevel: null,
-  stage: 1, bestStage: 0, lives: 3, maxLives: 3,
-  correctCount: 0, wrongCount: 0,
-  currentWord: null, answered: false,
-  wrongWords: [], wordQueue: [], isFetching: false, difficultyBoost: 0,
-};
+// ===== UTILS =====
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active')}
+function $(id){return document.getElementById(id)}
 
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
+// ===== LOGIN =====
+$('nick-inp').addEventListener('input',function(){$('login-btn').disabled=this.value.trim().length<1});
+$('nick-inp').addEventListener('keydown',function(e){if(e.key==='Enter'&&this.value.trim())doLogin()});
+function doLogin(){const n=$('nick-inp').value.trim();if(!n)return;G.nick=n;show('onboarding')}
+function toggleNotice(){const n=$('notice');n.style.display=n.style.display==='none'?'block':'none'}
+
+// ===== ONBOARDING =====
+function selectLevel(el){
+  document.querySelectorAll('.lv-item').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  G.selLv=el.dataset.level;
+  $('start-btn').disabled=false;
+}
+function selectLives(el){
+  document.querySelectorAll('.ls-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  G.maxLives=parseInt(el.dataset.lives);
 }
 
-// LOGIN
-document.getElementById('nickname-input').addEventListener('input', function() {
-  document.getElementById('login-btn').disabled = this.value.trim().length < 1;
-});
-document.getElementById('nickname-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && this.value.trim().length > 0) doLogin();
-});
-function doLogin() {
-  const nick = document.getElementById('nickname-input').value.trim();
-  if (!nick) return;
-  state.nickname = nick;
-  show('onboarding');
-}
-function toggleOAuthNotice() {
-  const n = document.getElementById('oauth-notice');
-  n.style.display = n.style.display === 'none' ? 'block' : 'none';
-}
-
-// ONBOARDING
-function selectLevel(el) {
-  document.querySelectorAll('.level-item').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  state.selectedLevel = el.dataset.level;
-  document.getElementById('start-btn').disabled = false;
-}
-
-function startGame() {
-  if (!state.selectedLevel) return;
-  state.currentLevel = state.selectedLevel;
-  state.stage = 1; state.lives = 3; state.correctCount = 0; state.wrongCount = 0;
-  state.wrongWords = []; state.wordQueue = []; state.difficultyBoost = 0; state.isFetching = false;
+// ===== GAME START =====
+function startGame(){
+  if(!G.selLv)return;
+  G.curLv=G.selLv;
+  G.stage=1;G.lives=G.maxLives;G.correct=0;G.wrong=0;
+  G.wrongWords=[];G.usedIdx={};G.answered=false;
   show('game');
-  renderGameUI();
-  loadNextWord();
+  renderHdr();
+  nextWord();
 }
 
-// AI WORD GENERATION
-async function fetchWordFromAI(level, boost) {
-  const usedWords = state.wrongWords.map(w => w.word).concat(state.wordQueue.map(w => w.word));
-  const avoidNote = usedWords.length > 0 ? ` 다음 단어들은 이미 사용했으니 제외해주세요: ${usedWords.slice(-10).join(', ')}.` : '';
-  const diffNote = boost > 0 ? ` 난이도를 ${boost}단계 더 높여서 덜 알려진 단어를 선택해주세요.` : '';
-
-  const prompt = `${LEVEL_PROMPTS[level]}${diffNote}${avoidNote}
-
-반드시 아래 JSON 형식으로만 응답하세요. 설명이나 마크다운 없이 순수 JSON만:
-{"word":"영어단어","phonetic":"/발음기호/","meaning":"한글뜻","options":["정답포함4개한글뜻"]}
-
-규칙:
-- options 배열에는 반드시 meaning(정답)이 포함되어야 합니다
-- options 4개는 서로 헷갈릴 수 있는 비슷한 한국어 뜻으로 구성
-- 단어는 반드시 실제 영어 단어
-- 다양하고 흥미로운 단어 선택`;
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 200,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  const data = await response.json();
-  const text = data.content[0].text.trim().replace(/```json|```/g, '').trim();
-  const parsed = JSON.parse(text);
-  // 정답이 options에 없으면 추가
-  if (!parsed.options.includes(parsed.meaning)) {
-    parsed.options[3] = parsed.meaning;
-    parsed.options = parsed.options.sort(() => Math.random() - 0.5);
-  }
-  return parsed;
+// ===== WORD PICKING =====
+function pickWord(level){
+  const pool=WB[level]||WB.high;
+  if(!G.usedIdx[level])G.usedIdx[level]=[];
+  let avail=pool.map((_,i)=>i).filter(i=>!G.usedIdx[level].includes(i));
+  if(avail.length===0){G.usedIdx[level]=[];avail=pool.map((_,i)=>i)}
+  const idx=avail[Math.floor(Math.random()*avail.length)];
+  G.usedIdx[level].push(idx);
+  return pool[idx];
 }
 
-async function loadNextWord() {
-  if (state.wordQueue.length > 0) {
-    renderWord(state.wordQueue.shift());
-    if (state.wordQueue.length === 0) prefetchWord();
-    return;
-  }
-  showWordLoading(true);
-  document.getElementById('options-grid').innerHTML = '';
-  try {
-    const word = await fetchWordFromAI(state.currentLevel, state.difficultyBoost);
-    showWordLoading(false);
-    renderWord(word);
-    prefetchWord();
-  } catch(e) {
-    showWordLoading(false);
-    renderWord(getFallback(state.currentLevel));
-  }
-}
-
-async function prefetchWord() {
-  if (state.isFetching) return;
-  state.isFetching = true;
-  try {
-    const word = await fetchWordFromAI(state.currentLevel, state.difficultyBoost);
-    state.wordQueue.push(word);
-  } catch(e) {}
-  state.isFetching = false;
-}
-
-function showWordLoading(isLoading) {
-  document.getElementById('word-loading').style.display = isLoading ? 'flex' : 'none';
-  document.getElementById('word-loading').style.flexDirection = 'column';
-  document.getElementById('word-loading').style.alignItems = 'center';
-  document.getElementById('word-content').style.display = isLoading ? 'none' : 'block';
-}
-
-function renderWord(word) {
-  state.currentWord = word;
-  state.answered = false;
-  document.getElementById('word-en').textContent = word.word;
-  document.getElementById('word-phonetic').textContent = word.phonetic || '';
-  document.getElementById('feedback-bar').className = 'feedback-bar';
-  const grid = document.getElementById('options-grid');
-  grid.innerHTML = '';
-  const shuffled = [...word.options].sort(() => Math.random() - 0.5);
-  shuffled.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.innerHTML = '<span class="opt-num">' + (i+1) + '</span>' + opt;
-    btn.onclick = () => checkAnswer(opt, word.meaning, btn);
+function nextWord(){
+  const w=pickWord(G.curLv);
+  G.curWord=w;
+  G.answered=false;
+  $('word-en').textContent=w.w;
+  $('word-ph').textContent=w.p;
+  $('fb').className='fb';
+  const grid=$('opts');grid.innerHTML='';
+  const shuffled=[...w.o].sort(()=>Math.random()-.5);
+  shuffled.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML='<span class="onum">'+(i+1)+'</span>'+opt;
+    btn.onclick=()=>checkAns(opt,w.k,btn);
     grid.appendChild(btn);
   });
 }
 
-// GAME LOGIC
-function renderGameUI() {
-  renderLives();
-  document.getElementById('stage-num').textContent = state.stage;
-  document.getElementById('best-num').textContent = state.bestStage;
-  document.getElementById('level-pill').textContent = LEVEL_NAMES[state.currentLevel] || state.currentLevel;
-  const pct = Math.min(95, ((state.stage - 1) % 10) / 10 * 100 + 5);
-  document.getElementById('progress-fill').style.width = pct + '%';
-}
-
-function renderLives() {
-  const el = document.getElementById('lives-display');
-  el.innerHTML = '';
-  for (let i = 0; i < state.maxLives; i++) {
-    const h = document.createElement('span');
-    h.className = 'heart' + (i >= state.lives ? ' lost' : '');
-    h.textContent = '❤';
-    el.appendChild(h);
+// ===== GAME LOGIC =====
+function renderHdr(){
+  // lives
+  const ld=$('lives-disp');ld.innerHTML='';
+  for(let i=0;i<G.maxLives;i++){
+    const h=document.createElement('span');
+    h.className='hrt'+(i>=G.lives?' lost':'');
+    h.textContent='❤';ld.appendChild(h);
   }
+  $('stg-num').textContent=G.stage;
+  $('best-num').textContent=G.best;
+  $('lv-pill').textContent=LN[G.curLv]||G.curLv;
+  const pct=Math.min(95,((G.stage-1)%10)/10*100+5);
+  $('prog-fill').style.width=pct+'%';
 }
 
-function checkAnswer(chosen, correct, btn) {
-  if (state.answered) return;
-  state.answered = true;
-  document.querySelectorAll('.option-btn').forEach(b => b.classList.add('disabled'));
-  const fb = document.getElementById('feedback-bar');
-
-  if (chosen === correct) {
-    btn.classList.add('correct');
-    state.correctCount++;
-    state.stage++;
-    if (state.stage > state.bestStage) state.bestStage = state.stage;
-    fb.className = 'feedback-bar correct-fb show';
-    document.getElementById('fb-title').textContent = '정답! 🎉 +1 스테이지';
-    document.getElementById('fb-hint').textContent = (state.currentWord.word || '') + ' = ' + correct;
-    renderGameUI();
-    setTimeout(checkMilestone, 900);
+function checkAns(chosen,correct,btn){
+  if(G.answered)return;
+  G.answered=true;
+  document.querySelectorAll('.opt').forEach(b=>b.classList.add('dis'));
+  const fb=$('fb');
+  if(chosen===correct){
+    btn.classList.add('ok');
+    G.correct++;G.stage++;
+    if(G.stage>G.best)G.best=G.stage;
+    fb.className='fb ok-fb show';
+    $('fb-t').textContent='정답! 🎉 +1 STAGE';
+    $('fb-h').textContent=G.curWord.w+' = '+correct;
+    renderHdr();
+    setTimeout(checkMilestone,850);
   } else {
-    btn.classList.add('wrong');
-    document.querySelectorAll('.option-btn').forEach(b => { if (b.textContent.trim().includes(correct)) b.classList.add('correct'); });
-    state.lives--;
-    state.wrongCount++;
-    if (state.currentWord && !state.wrongWords.find(w => w.word === state.currentWord.word)) state.wrongWords.push(state.currentWord);
-    fb.className = 'feedback-bar wrong-fb show';
-    document.getElementById('fb-title').textContent = '틀렸어요 💔';
-    document.getElementById('fb-hint').textContent = '정답: ' + correct;
-    renderLives();
-    if (state.lives <= 0) setTimeout(showGameOver, 1200);
-    else setTimeout(() => { renderGameUI(); loadNextWord(); }, 1300);
+    btn.classList.add('no');
+    document.querySelectorAll('.opt').forEach(b=>{if(b.textContent.includes(correct))b.classList.add('ok')});
+    G.lives--;G.wrong++;
+    if(G.curWord&&!G.wrongWords.find(w=>w.w===G.curWord.w))G.wrongWords.push(G.curWord);
+    fb.className='fb no-fb show';
+    $('fb-t').textContent='틀렸어요 💔';
+    $('fb-h').textContent='정답: '+correct;
+    renderHdr();
+    if(G.lives<=0)setTimeout(gameOver,1200);
+    else setTimeout(()=>{renderHdr();nextWord()},1300);
   }
 }
 
-function checkMilestone() {
-  const s = state.stage;
-  const idx = LEVEL_ORDER.indexOf(state.currentLevel);
-
-  // 레벨업 (50스테이지마다)
-  if ((s - 1) > 0 && (s - 1) % 50 === 0 && idx < LEVEL_ORDER.length - 1) {
-    const next = LEVEL_ORDER[idx + 1];
-    state.currentLevel = next;
-    state.wordQueue = [];
-    state.difficultyBoost = 0;
-    showUpgrade('🏆', LEVEL_NAMES[next] + ' 레벨 달성!', `Stage ${s-1} 돌파! 🎊\n이제 ${LEVEL_NAMES[next]} 수준 단어가 출제됩니다.`);
+function checkMilestone(){
+  const s=G.stage;
+  const idx=LO.indexOf(G.curLv);
+  // 레벨업 (50마다)
+  if((s-1)>0&&(s-1)%50===0&&idx<LO.length-1){
+    const nxt=LO[idx+1];G.curLv=nxt;G.usedIdx={};
+    showUp('🏆',LN[nxt]+' 레벨 달성!',`Stage ${s-1} 돌파! 🎊\n이제 ${LN[nxt]} 수준 단어가 출제됩니다.`);
     return;
   }
-  // 난이도 상승 (10스테이지마다)
-  if ((s - 1) > 0 && (s - 1) % 10 === 0) {
-    state.difficultyBoost++;
-    state.wordQueue = [];
-    showUpgrade('⚡', `Stage ${s-1} 클리어!`, `조금 더 어려운 단어가 출제됩니다.\n계속 도전하세요!`);
+  // 10스테이지마다 알림
+  if((s-1)>0&&(s-1)%10===0){
+    showUp('⚡',`Stage ${s-1} 클리어!`,'조금 더 어려운 단어가 나옵니다.\n계속 도전하세요!');
     return;
   }
-  loadNextWord();
+  nextWord();
 }
 
-function showUpgrade(badge, title, sub) {
-  document.getElementById('upgrade-badge').textContent = badge;
-  document.getElementById('upgrade-title').textContent = title;
-  document.getElementById('upgrade-sub').textContent = sub;
-  document.getElementById('upgrade-overlay').classList.add('show');
+function showUp(badge,title,sub){
+  $('up-badge').textContent=badge;$('up-title').textContent=title;$('up-sub').textContent=sub;
+  $('up-ov').classList.add('show');
 }
-function closeUpgrade() {
-  document.getElementById('upgrade-overlay').classList.remove('show');
-  loadNextWord();
+function closeUp(){$('up-ov').classList.remove('show');nextWord()}
+
+// ===== RANKING =====
+function saveScore(){
+  let ranks=JSON.parse(localStorage.getItem('reflit_ranks')||'[]');
+  ranks.push({name:G.nick,stage:G.stage,level:LN[G.curLv],correct:G.correct,wrong:G.wrong,date:new Date().toLocaleDateString('ko-KR')});
+  ranks.sort((a,b)=>b.stage-a.stage);
+  ranks=ranks.slice(0,20);
+  localStorage.setItem('reflit_ranks',JSON.stringify(ranks));
+  return ranks;
 }
 
-function showGameOver() {
-  document.getElementById('go-stage').textContent = state.stage;
-  document.getElementById('go-best').textContent = state.bestStage;
-  document.getElementById('go-correct').textContent = state.correctCount;
-  document.getElementById('go-wrong').textContent = state.wrongCount;
-  const msgs = [[50,`대단해요! ${LEVEL_NAMES[state.currentLevel]} 레벨까지! 🏆`],[20,'훌륭해요! 조금만 더 하면 레벨업! 💪'],[10,'잘 했어요! 다시 도전하면 더 잘할 수 있어요!'],[0,'아쉽지만 연습이 실력! 다시 도전해요 🔥']];
-  document.getElementById('go-sub').textContent = msgs.find(([n]) => state.stage >= n)[1];
+function showRanking(){
+  const ranks=saveScore();
+  renderRanking(ranks);
+  show('ranking');
+}
+
+function renderRanking(ranks){
+  const list=$('rank-list');
+  if(ranks.length===0){list.innerHTML='<div class="rank-empty">아직 기록이 없어요!<br>첫 번째 도전자가 되어보세요 🚀</div>';return}
+  const medals=['🥇','🥈','🥉'];
+  list.innerHTML=ranks.map((r,i)=>{
+    const isMe=r.name===G.nick&&r.stage===G.stage;
+    return`<div class="rank-item${isMe?' me':''}">
+      <div class="rank-pos">${i+1}</div>
+      <div class="rank-medal">${medals[i]||''}</div>
+      <div class="rank-info">
+        <div class="rank-name">${r.name}</div>
+        <div class="rank-detail">${r.level} · 정답 ${r.correct} · ${r.date}</div>
+      </div>
+      <div class="rank-score">${r.stage}</div>
+    </div>`;
+  }).join('');
+}
+
+function closeRanking(){show('gameover')}
+function retryFromRanking(){G.usedIdx={};startGame()}
+
+// ===== GAME OVER =====
+function gameOver(){
+  saveScore();
+  $('go-stg').textContent=G.stage;
+  $('go-best').textContent=G.best;
+  $('go-ok').textContent=G.correct;
+  $('go-no').textContent=G.wrong;
+  const msgs=[[50,`대단해요! ${LN[G.curLv]} 레벨까지! 🏆`],[20,'훌륭해요! 레벨업이 코앞이에요! 💪'],[10,'잘 했어요! 다시 도전하면 더 잘할 수 있어요!'],[0,'아쉽지만 연습이 실력! 다시 도전해요 🔥']];
+  $('go-sub').textContent=msgs.find(([n])=>G.stage>=n)[1];
   show('gameover');
 }
 
-function retryGame() {
-  state.wordQueue = [];
-  startGame();
-}
-
-function showWrongWords() {
-  if (state.wrongWords.length === 0) { alert('틀린 단어가 없어요! 완벽해요 🎉'); return; }
-  alert('📝 틀린 단어 목록\n\n' + state.wrongWords.map(w => `• ${w.word} = ${w.meaning}`).join('\n'));
-}
-
-function getFallback(level) {
-  const f = {
-    kindergarten:{word:'happy',phonetic:'/ˈhæpi/',meaning:'행복한',options:['슬픈','행복한','화난','무서운']},
-    elementary:{word:'discover',phonetic:'/dɪˈskʌvər/',meaning:'발견하다',options:['잃다','숨기다','발견하다','찾다']},
-    high:{word:'ambiguous',phonetic:'/æmˈbɪɡjuəs/',meaning:'모호한',options:['명확한','모호한','분명한','구체적인']},
-    university:{word:'paradigm',phonetic:'/ˈpærədaɪm/',meaning:'패러다임',options:['이론','패러다임','실험','분석']},
-    expert:{word:'laconic',phonetic:'/ləˈkɒnɪk/',meaning:'간결한',options:['장황한','간결한','복잡한','모호한']},
-    native:{word:'sonder',phonetic:'/ˈsɒndər/',meaning:'타인의 삶의 깊이를 깨닫는 감정',options:['고독감','타인의 삶의 깊이를 깨닫는 감정','향수','경이감']},
-  };
-  return f[level] || f.high;
+function retryGame(){G.usedIdx={};startGame()}
+function showWrong(){
+  if(!G.wrongWords.length){alert('틀린 단어가 없어요! 완벽해요 🎉');return}
+  alert('📝 틀린 단어 목록\n\n'+G.wrongWords.map(w=>`• ${w.w} (${w.p}) = ${w.k}`).join('\n'));
 }
 </script>
 </body>
