@@ -230,37 +230,43 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
   <div class="level-list" id="level-list">
     <div class="lv-item" data-level="kindergarten" onclick="selectLevel(this)">
       <div class="lv-icon">🌱</div>
-      <div class="lv-text"><div class="lv-name">유치원</div><div class="lv-desc">cat, big, run, happy… 기초 생활 단어 80개</div></div>
+      <div class="lv-text"><div class="lv-name">유치원 <span style="font-size:11px;color:var(--text3);font-weight:400">· 1점/문제</span></div><div class="lv-desc">cat, big, run… 기초 생활 단어 80개</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="elementary" onclick="selectLevel(this)">
       <div class="lv-icon">📚</div>
-      <div class="lv-text"><div class="lv-name">초등</div><div class="lv-desc">adventure, discover… 교과서 어휘 100개</div></div>
+      <div class="lv-text"><div class="lv-name">초등 <span style="font-size:11px;color:var(--text3);font-weight:400">· 5점/문제</span></div><div class="lv-desc">adventure, discover… 교과서 어휘 · DB 전환 시 300개+</div></div>
+      <div class="lv-chk"></div>
+    </div>
+    <div class="lv-item" data-level="middle" onclick="selectLevel(this)">
+      <div class="lv-icon">📖</div>
+      <div class="lv-text"><div class="lv-name">중등 <span style="font-size:11px;color:var(--text3);font-weight:400">· 15점/문제</span></div><div class="lv-desc">ambiguous, resilience… 중학 필수 어휘 · DB 전환 시 1,000개+</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="high" onclick="selectLevel(this)">
       <div class="lv-icon">🎓</div>
-      <div class="lv-text"><div class="lv-name">고등</div><div class="lv-desc">ambiguous, eloquent… 수능 빈출 120개</div></div>
+      <div class="lv-text"><div class="lv-name">고등 <span style="font-size:11px;color:var(--text3);font-weight:400">· 30점/문제</span></div><div class="lv-desc">eloquent, inevitable… 수능 빈출 · DB 전환 시 2,000개+</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="university" onclick="selectLevel(this)">
       <div class="lv-icon">🏛️</div>
-      <div class="lv-text"><div class="lv-name">대학교</div><div class="lv-desc">paradigm, hegemony… 학술 어휘 130개</div></div>
+      <div class="lv-text"><div class="lv-name">대학교 <span style="font-size:11px;color:var(--text3);font-weight:400">· 60점/문제</span></div><div class="lv-desc">paradigm, hegemony… 학술 어휘 130개</div></div>
       <div class="lv-chk"></div>
     </div>
     <div class="lv-item" data-level="expert" onclick="selectLevel(this)">
       <div class="lv-icon">⚡</div>
-      <div class="lv-text"><div class="lv-name">전문가</div><div class="lv-desc">solipsism, laconic… 고급·원어민 140개</div></div>
+      <div class="lv-text"><div class="lv-name">전문가 <span style="font-size:11px;color:var(--text3);font-weight:400">· 100점/문제</span></div><div class="lv-desc">solipsism, laconic… 고급·원어민 140개</div></div>
       <div class="lv-chk"></div>
     </div>
   </div>
   <div class="lives-setting">
     <div class="ls-title">목숨 설정</div>
     <div class="ls-row" id="ls-row">
-      <div class="ls-opt sel" data-lives="3" onclick="selectLives(this)"><span class="ls-hearts">❤❤❤</span><span class="ls-label">보통</span></div>
+      <div class="ls-opt sel" data-lives="3" onclick="selectLives(this)"><span class="ls-hearts">❤❤❤</span><span class="ls-label">보통 · 랭킹 등록</span></div>
       <div class="ls-opt" data-lives="5" onclick="selectLives(this)"><span class="ls-hearts">❤❤❤❤❤</span><span class="ls-label">쉬움</span></div>
       <div class="ls-opt" data-lives="1" onclick="selectLives(this)"><span class="ls-hearts">❤</span><span class="ls-label">극한</span></div>
     </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center;font-family:'Plus Jakarta Sans',sans-serif">⚠ 랭킹 등록은 하트 3개(보통) 모드만 가능해요</div>
   </div>
   <button class="btn btn-p" id="start-btn" disabled onclick="startGame()">게임 시작 →</button>
 </div>
@@ -275,7 +281,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
       <div class="lv-pill" id="lv-pill">유치원</div>
     </div>
     <div class="best-right">
-      <div class="best-lbl">BEST</div>
+      <div class="best-lbl">SCORE</div>
       <div class="best-num" id="best-num">0</div>
     </div>
   </div>
@@ -315,6 +321,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
     <div class="rank-tab active" data-level="전체" onclick="switchRankTab(this)">전체</div>
     <div class="rank-tab" data-level="유치원" onclick="switchRankTab(this)">🌱 유치원</div>
     <div class="rank-tab" data-level="초등" onclick="switchRankTab(this)">📚 초등</div>
+    <div class="rank-tab" data-level="중등" onclick="switchRankTab(this)">📖 중등</div>
     <div class="rank-tab" data-level="고등" onclick="switchRankTab(this)">🎓 고등</div>
     <div class="rank-tab" data-level="대학교" onclick="switchRankTab(this)">🏛️ 대학교</div>
     <div class="rank-tab" data-level="전문가" onclick="switchRankTab(this)">⚡ 전문가</div>
@@ -330,7 +337,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
   <div class="go-sub" id="go-sub"></div>
   <div class="go-grid">
     <div class="go-stat"><div class="go-sl">STAGE</div><div class="go-sv acc" id="go-stg">1</div></div>
-    <div class="go-stat"><div class="go-sl">BEST</div><div class="go-sv gold" id="go-best">0</div></div>
+    <div class="go-stat"><div class="go-sl">SCORE</div><div class="go-sv gold" id="go-best">0</div></div>
     <div class="go-stat"><div class="go-sl">정답</div><div class="go-sv" id="go-ok">0</div></div>
     <div class="go-stat"><div class="go-sl">오답</div><div class="go-sv" id="go-no">0</div></div>
   </div>
@@ -520,6 +527,59 @@ elementary:[
   {w:'concentrate',p:'/ˈkɒnsəntreɪt/',k:'집중하다',o:['산만해지다','집중하다','포기하다','쉬다']},
   {w:'forgive',p:'/fərˈɡɪv/',k:'용서하다',o:['원망하다','용서하다','잊다','기억하다']},
   {w:'appreciate',p:'/əˈpriːʃieɪt/',k:'감사하다',o:['무시하다','감사하다','비판하다','질투하다']},
+],
+middle:[
+  {w:'ambiguous',p:'/æmˈbɪɡjuəs/',k:'모호한',o:['명확한','모호한','분명한','구체적인']},
+  {w:'resilience',p:'/rɪˈzɪliəns/',k:'회복력',o:['취약성','회복력','저항','적응']},
+  {w:'emphasize',p:'/ˈɛmfəsaɪz/',k:'강조하다',o:['무시하다','강조하다','반박하다','설명하다']},
+  {w:'reluctant',p:'/rɪˈlʌktənt/',k:'꺼리는',o:['열정적인','꺼리는','즐거운','자발적인']},
+  {w:'significant',p:'/sɪɡˈnɪfɪkənt/',k:'중요한',o:['사소한','중요한','평범한','일시적인']},
+  {w:'consequence',p:'/ˈkɒnsɪkwəns/',k:'결과',o:['원인','결과','과정','목적']},
+  {w:'perspective',p:'/pərˈspɛktɪv/',k:'관점',o:['사실','관점','증거','의견']},
+  {w:'opportunity',p:'/ˌɒpəˈtjuːnɪti/',k:'기회',o:['위협','기회','도전','실패']},
+  {w:'responsibility',p:'/rɪˌspɒnsɪˈbɪlɪti/',k:'책임',o:['권리','책임','의무','자유']},
+  {w:'communicate',p:'/kəˈmjuːnɪkeɪt/',k:'소통하다',o:['침묵하다','소통하다','싸우다','떠나다']},
+  {w:'demonstrate',p:'/ˈdɛmənstreɪt/',k:'증명하다',o:['숨기다','증명하다','부정하다','주장하다']},
+  {w:'investigate',p:'/ɪnˈvɛstɪɡeɪt/',k:'조사하다',o:['숨기다','조사하다','무시하다','발표하다']},
+  {w:'accomplish',p:'/əˈkʌmplɪʃ/',k:'성취하다',o:['포기하다','성취하다','시작하다','미루다']},
+  {w:'environment',p:'/ɪnˈvaɪərənmənt/',k:'환경',o:['환경','날씨','자연','사회']},
+  {w:'influence',p:'/ˈɪnfluəns/',k:'영향',o:['결과','영향','원인','변화']},
+  {w:'contribute',p:'/kənˈtrɪbjuːt/',k:'기여하다',o:['빼앗다','기여하다','방해하다','떠나다']},
+  {w:'sufficient',p:'/səˈfɪʃənt/',k:'충분한',o:['부족한','충분한','과도한','적절한']},
+  {w:'efficient',p:'/ɪˈfɪʃənt/',k:'효율적인',o:['비효율적인','효율적인','느린','복잡한']},
+  {w:'flexible',p:'/ˈflɛksɪbl/',k:'유연한',o:['딱딱한','유연한','강한','약한']},
+  {w:'precise',p:'/prɪˈsaɪs/',k:'정확한',o:['부정확한','정확한','애매한','모호한']},
+  {w:'relevant',p:'/ˈrɛlɪvənt/',k:'관련된',o:['무관한','관련된','중요한','사소한']},
+  {w:'interpret',p:'/ɪnˈtɜːrprɪt/',k:'해석하다',o:['무시하다','해석하다','번역하다','읽다']},
+  {w:'establish',p:'/ɪˈstæblɪʃ/',k:'확립하다',o:['해체하다','확립하다','의심하다','약화시키다']},
+  {w:'maintain',p:'/meɪnˈteɪn/',k:'유지하다',o:['버리다','유지하다','파괴하다','시작하다']},
+  {w:'acquire',p:'/əˈkwaɪər/',k:'습득하다',o:['잃다','습득하다','포기하다','빌리다']},
+  {w:'transform',p:'/trænsˈfɔːrm/',k:'변형하다',o:['유지하다','변형하다','파괴하다','복원하다']},
+  {w:'evaluate',p:'/ɪˈvæljueɪt/',k:'평가하다',o:['무시하다','평가하다','수정하다','승인하다']},
+  {w:'generate',p:'/ˈdʒɛnəreɪt/',k:'생성하다',o:['소멸시키다','생성하다','유지하다','변형하다']},
+  {w:'justify',p:'/ˈdʒʌstɪfaɪ/',k:'정당화하다',o:['비판하다','정당화하다','포기하다','반박하다']},
+  {w:'motivate',p:'/ˈmoʊtɪveɪt/',k:'동기를 주다',o:['낙담시키다','동기를 주다','명령하다','금지하다']},
+  {w:'negotiate',p:'/nɪˈɡoʊʃieɪt/',k:'협상하다',o:['강요하다','협상하다','포기하다','무시하다']},
+  {w:'perceive',p:'/pərˈsiːv/',k:'인식하다',o:['무시하다','인식하다','잊다','기억하다']},
+  {w:'anticipate',p:'/ænˈtɪsɪpeɪt/',k:'예상하다',o:['기억하다','예상하다','후회하다','무시하다']},
+  {w:'acknowledge',p:'/əkˈnɒlɪdʒ/',k:'인정하다',o:['부정하다','인정하다','주장하다','설명하다']},
+  {w:'advocate',p:'/ˈædvəkeɪt/',k:'지지하다',o:['반대하다','지지하다','무시하다','비판하다']},
+  {w:'compromise',p:'/ˈkɒmprəmaɪz/',k:'타협',o:['갈등','타협','고집','굴복']},
+  {w:'dilemma',p:'/dɪˈlɛmə/',k:'딜레마',o:['해결책','딜레마','선택','목표']},
+  {w:'empathy',p:'/ˈɛmpəθi/',k:'공감',o:['무관심','공감','동정','혐오']},
+  {w:'initiative',p:'/ɪˈnɪʃɪətɪv/',k:'주도권',o:['수동성','주도권','복종','포기']},
+  {w:'integrity',p:'/ɪnˈtɛɡrɪti/',k:'정직성',o:['부정직','정직성','능력','지식']},
+  {w:'objective',p:'/əbˈdʒɛktɪv/',k:'객관적인',o:['주관적인','객관적인','감정적인','편향된']},
+  {w:'perseverance',p:'/ˌpɜːrsɪˈvɪərəns/',k:'인내',o:['포기','인내','충동','게으름']},
+  {w:'diverse',p:'/daɪˈvɜːrs/',k:'다양한',o:['단일한','다양한','복잡한','단순한']},
+  {w:'fundamental',p:'/ˌfʌndəˈmɛntəl/',k:'근본적인',o:['표면적인','근본적인','부차적인','임시적인']},
+  {w:'hypothesis',p:'/haɪˈpɒθɪsɪs/',k:'가설',o:['결론','가설','사실','증거']},
+  {w:'interact',p:'/ˌɪntərˈækt/',k:'상호작용하다',o:['무시하다','상호작용하다','분리되다','충돌하다']},
+  {w:'analyze',p:'/ˈænəlaɪz/',k:'분석하다',o:['종합하다','분석하다','외우다','무시하다']},
+  {w:'identify',p:'/aɪˈdɛntɪfaɪ/',k:'파악하다',o:['숨기다','파악하다','잊다','혼동하다']},
+  {w:'reliable',p:'/rɪˈlaɪəbl/',k:'믿을 수 있는',o:['믿을 수 없는','믿을 수 있는','빠른','느린']},
+  {w:'rational',p:'/ˈræʃənəl/',k:'합리적인',o:['감정적인','합리적인','충동적인','비논리적인']},
+  {w:'complex',p:'/ˈkɒmplɛks/',k:'복잡한',o:['단순한','복잡한','명확한','쉬운']},
 ],
 high:[
   {w:'ambiguous',p:'/æmˈbɪɡjuəs/',k:'모호한',o:['명확한','모호한','분명한','구체적인']},
@@ -837,13 +897,14 @@ expert:[
 ]};
 
 // ===== STATE =====
-const LN = {kindergarten:'유치원',elementary:'초등',high:'고등',university:'대학교',expert:'전문가',native:'원어민'};
-const LO = ['kindergarten','elementary','high','university','expert','native'];
+const LN = {kindergarten:'유치원',elementary:'초등',middle:'중등',high:'고등',university:'대학교',expert:'전문가',native:'원어민'};
+const LO = ['kindergarten','elementary','middle','high','university','expert','native'];
+const SCORE_PER_LEVEL = {kindergarten:1,elementary:5,middle:15,high:30,university:60,expert:100,native:150};
 
 let G = {
   nick:'', selLv:null, curLv:null,
   stage:1, best:0, lives:3, maxLives:3,
-  correct:0, wrong:0,
+  score:0, correct:0, wrong:0,
   curWord:null, answered:false,
   wrongWords:[], usedIdx:{},
 };
@@ -878,7 +939,7 @@ function selectLives(el){
 function startGame(){
   if(!G.selLv)return;
   G.curLv=G.selLv;
-  G.stage=1;G.lives=G.maxLives;G.correct=0;G.wrong=0;
+  G.stage=1;G.lives=G.maxLives;G.score=0;G.correct=0;G.wrong=0;
   G.wrongWords=[];G.usedIdx={};G.answered=false;
   show('game');
   renderHdr();
@@ -923,7 +984,7 @@ function renderHdr(){
     h.textContent='❤';ld.appendChild(h);
   }
   $('stg-num').textContent=G.stage;
-  $('best-num').textContent=G.best;
+  $('best-num').textContent=G.score.toLocaleString();
   $('lv-pill').textContent=LN[G.curLv]||G.curLv;
   const pct=Math.min(95,((G.stage-1)%10)/10*100+5);
   $('prog-fill').style.width=pct+'%';
@@ -936,10 +997,12 @@ function checkAns(chosen,correct,btn){
   const fb=$('fb');
   if(chosen===correct){
     btn.classList.add('ok');
+    const pts = SCORE_PER_LEVEL[G.curLv]||1;
+    G.score += pts;
     G.correct++;G.stage++;
     if(G.stage>G.best)G.best=G.stage;
     fb.className='fb ok-fb show';
-    $('fb-t').textContent='정답! 🎉 +1 STAGE';
+    $('fb-t').textContent='정답! 🎉 +'+pts+'점';
     $('fb-h').textContent=G.curWord.w+' = '+correct;
     renderHdr();
     setTimeout(checkMilestone,850);
@@ -1001,13 +1064,14 @@ async function sbFetch(path, opts={}){
 }
 
 async function saveScore(){
+  const entry={nickname:G.nick,stage:G.stage,score:G.score,level:LN[G.curLv],correct:G.correct,wrong:G.wrong,created_at:new Date().toISOString()};
   // 로컬 백업
   let local=JSON.parse(localStorage.getItem('reflit_ranks')||'[]');
-  const entry={nickname:G.nick,stage:G.stage,level:LN[G.curLv],correct:G.correct,wrong:G.wrong,created_at:new Date().toISOString()};
   local.push(entry);
-  local.sort((a,b)=>b.stage-a.stage);
+  local.sort((a,b)=>b.score-a.score);
   localStorage.setItem('reflit_ranks',JSON.stringify(local.slice(0,20)));
-  // Supabase 저장
+  // 하트 3개(보통)만 랭킹 등록
+  if(G.maxLives!==3) return;
   try {
     await sbFetch('rankings',{
       method:'POST',
@@ -1015,6 +1079,7 @@ async function saveScore(){
       body: JSON.stringify({
         nickname: G.nick,
         stage: G.stage,
+        score: G.score,
         level: LN[G.curLv],
         correct: G.correct,
         wrong: G.wrong
@@ -1033,7 +1098,7 @@ async function showRanking(){
   const list=$('rank-list');
   list.innerHTML='<div class="rank-empty"><div class="ld-dots"><span></span><span></span><span></span></div><div style="margin-top:10px">랭킹 불러오는 중...</div></div>';
   try {
-    rankData = await sbFetch('rankings?select=*&order=stage.desc&limit=100') || [];
+    rankData = await sbFetch('rankings?select=*&order=score.desc&limit=100') || [];
     renderRanking(rankData, '전체');
   } catch(e){
     rankData = JSON.parse(localStorage.getItem('reflit_ranks')||'[]').map(r=>({...r,nickname:r.nickname||r.name}));
@@ -1066,7 +1131,7 @@ function renderRanking(ranks, level='전체'){
         <div class="rank-name">${r.nickname||r.name}</div>
         <div class="rank-detail">${r.level} · 정답 ${r.correct} · ${date}</div>
       </div>
-      <div class="rank-score">${r.stage}</div>
+      <div class="rank-score">${(r.score||0).toLocaleString()}</div>
     </div>`;
   }).join('');
 }
@@ -1078,11 +1143,11 @@ function retryFromRanking(){G.usedIdx={};startGame()}
 async function gameOver(){
   await saveScore();
   $('go-stg').textContent=G.stage;
-  $('go-best').textContent=G.best;
+  $('go-best').textContent=G.score.toLocaleString();
   $('go-ok').textContent=G.correct;
   $('go-no').textContent=G.wrong;
   const msgs=[[50,`대단해요! ${LN[G.curLv]} 레벨까지! 🏆`],[20,'훌륭해요! 레벨업이 코앞이에요! 💪'],[10,'잘 했어요! 다시 도전하면 더 잘할 수 있어요!'],[0,'아쉽지만 연습이 실력! 다시 도전해요 🔥']];
-  $('go-sub').textContent=msgs.find(([n])=>G.stage>=n)[1];
+  $('go-sub').textContent=(G.maxLives!==3?'⚠ 하트 3개 모드만 랭킹 등록돼요\n':'')+msgs.find(([n])=>G.stage>=n)[1];
   show('gameover');
 }
 
