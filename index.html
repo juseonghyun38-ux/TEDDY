@@ -1120,16 +1120,19 @@ function renderRanking(ranks, level='전체'){
     list.innerHTML=`<div class="rank-empty">${level==='전체'?'아직 기록이 없어요!':level+' 레벨 기록이 없어요!'}<br>첫 번째 도전자가 되어보세요 🚀</div>`;
     return;
   }
-  const medals=['🥇','🥈','🥉'];
-  list.innerHTML=ranks.slice(0,20).map((r,i)=>{
-    const isMe=(r.nickname||r.name)===G.nick && r.stage===G.stage;
+  list.innerHTML=ranks.slice(0,15).map((r,i)=>{
+    const isMe=(r.nickname||r.name)===G.nick && r.score===G.score;
     const date=r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '';
+    let trophy, trophyColor;
+    if(i===0){ trophy='🏆'; trophyColor='var(--gold)'; }
+    else if(i<=4){ trophy='🏆'; trophyColor='#b0b8c1'; }
+    else { trophy='🏆'; trophyColor='#a0785a'; }
     return`<div class="rank-item${isMe?' me':''}">
-      <div class="rank-pos">${i+1}</div>
-      <div class="rank-medal">${medals[i]||''}</div>
+      <div class="rank-pos" style="color:${i===0?'var(--gold)':i<=4?'#888':'#b87333'}">${i+1}</div>
+      <div class="rank-medal" style="filter:${i===0?'none':i<=4?'grayscale(1) brightness(1.4)':'sepia(1) saturate(0.6)'}">${trophy}</div>
       <div class="rank-info">
         <div class="rank-name">${r.nickname||r.name}</div>
-        <div class="rank-detail">${r.level} · 정답 ${r.correct} · ${date}</div>
+        <div class="rank-detail">${r.level} · Stage ${r.stage} · ${date}</div>
       </div>
       <div class="rank-score">${(r.score||0).toLocaleString()}</div>
     </div>`;
